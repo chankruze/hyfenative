@@ -13,7 +13,7 @@ import {
 const sendOtp = (payload: SendOtpPayload): Promise<SendOtpResponse> => {
   const valid = SendOtpPayloadSchema.parse(payload);
   return postWithSchema<SendOtpPayload, typeof SendOtpResponseSchema>(
-    '/auth/send_otp',
+    'auth/send_otp',
     valid,
     SendOtpResponseSchema,
   );
@@ -22,7 +22,7 @@ const sendOtp = (payload: SendOtpPayload): Promise<SendOtpResponse> => {
 const verifyOtp = (payload: VerifyOtpPayload): Promise<VerifyOtpResponse> => {
   const valid = VerifyOtpPayloadSchema.parse(payload);
   return postWithSchema<VerifyOtpPayload, typeof VerifyOtpResponseSchema>(
-    '/auth/verify_otp',
+    'auth/verify_otp',
     valid,
     VerifyOtpResponseSchema,
   );

@@ -14,7 +14,7 @@ describe('authApi contract', () => {
     jest.clearAllMocks();
   });
 
-  it('sendOtp validates payload and calls /auth/send_otp', async () => {
+  it('sendOtp validates payload and calls auth/send_otp', async () => {
     const response = { success: true };
     (postWithSchema as jest.Mock).mockResolvedValue(response);
 
@@ -29,13 +29,13 @@ describe('authApi contract', () => {
     await expect(authApi.sendOtp(payload)).resolves.toEqual(response);
 
     expect(postWithSchema).toHaveBeenCalledWith(
-      '/auth/send_otp',
+      'auth/send_otp',
       payload,
       SendOtpResponseSchema,
     );
   });
 
-  it('verifyOtp validates payload and calls /auth/verify_otp', async () => {
+  it('verifyOtp validates payload and calls auth/verify_otp', async () => {
     const response = { success: true, auth: { token: 'abc', expiresIn: 3600 } };
     (postWithSchema as jest.Mock).mockResolvedValue(response);
 
@@ -51,7 +51,7 @@ describe('authApi contract', () => {
     await expect(authApi.verifyOtp(payload)).resolves.toEqual(response);
 
     expect(postWithSchema).toHaveBeenCalledWith(
-      '/auth/verify_otp',
+      'auth/verify_otp',
       payload,
       VerifyOtpResponseSchema,
     );
