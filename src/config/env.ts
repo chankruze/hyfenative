@@ -1,5 +1,7 @@
 import Config from 'react-native-config';
 
+console.log('ENV DEBUG →', Config);
+
 export const env = {
   apiProtocol: Config.API_PROTOCOL,
   apiHost: Config.API_HOST,

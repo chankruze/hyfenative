@@ -1,5 +1,7 @@
 import { env } from '@/config/env';
 
+console.log('ENV DEBUG →', env);
+
 const protocol = env.apiProtocol ?? 'http';
 const host = env.apiHost ?? 'localhost:3000';
 const version = env.apiVersion ?? 'v1';
