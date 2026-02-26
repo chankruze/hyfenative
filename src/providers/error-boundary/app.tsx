@@ -1,10 +1,10 @@
 import { createContext, ErrorInfo, useCallback, useContext } from 'react';
 import { useQueryErrorResetBoundary } from '@tanstack/react-query';
 import { ErrorBoundary, FallbackProps } from 'react-error-boundary';
-import { normalizeError } from '@/lib/error/normalize';
+import { ErrorFallback } from './fallback';
 import { reportError } from '@/lib/error/reporting';
 import { resetAppState } from '@/lib/reset-app';
-import { ErrorFallback } from './error-boundary/fallback';
+import { normalizeError } from '@/lib/error/normalize';
 
 type Props = {
   children: React.ReactNode;

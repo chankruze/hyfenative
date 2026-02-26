@@ -4,7 +4,7 @@
 
 import React from 'react';
 import ReactTestRenderer from 'react-test-renderer';
-import App from '../src/app';
+import { App } from '../src/app';
 
 jest.mock('@react-navigation/native', () => ({
   NavigationContainer: ({ children }: { children: React.ReactNode }) =>
@@ -45,7 +45,7 @@ jest.mock('@/lib/query-client', () => ({
   persister: {},
 }));
 
-jest.mock('@/providers/app-error-boundary', () => ({
+jest.mock('@/providers/error-boundary', () => ({
   AppErrorBoundary: ({ children }: { children: React.ReactNode }) => children,
 }));
 

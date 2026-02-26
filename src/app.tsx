@@ -3,7 +3,7 @@ import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { RootNavigator } from '@/navigation/root-navigator';
 import { queryClient, persister } from '@/lib/query-client';
-import { AppErrorBoundary } from '@/providers/app-error-boundary';
+import { AppErrorBoundary } from '@/providers/error-boundary';
 
 const navigationTheme = {
   ...DefaultTheme,
