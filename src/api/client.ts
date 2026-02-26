@@ -1,7 +1,6 @@
 import ky from 'ky';
-import { storage } from '@/lib/storage';
-import { STORAGE_KEYS } from '@/lib/storage/keys';
 import { queryClient } from '@/lib/query-client';
+import { clearAuthStore, getAccessTokenFromStore } from '@/stores/use-auth-store';
 import { API_BASE_URL, API_PREFIX } from './config';
 import {
   convertKeysToCamelCase,
@@ -22,7 +21,7 @@ export const api = ky.create({
      */
     beforeRequest: [
       async request => {
-        const token = storage.getString(STORAGE_KEYS.AUTH_TOKEN);
+        const token = getAccessTokenFromStore();
 
         if (token) {
           request.headers.set('Authorization', `Bearer ${token}`);
@@ -67,7 +66,7 @@ export const api = ky.create({
     afterResponse: [
       async (_, __, response) => {
         if (response.status === 401) {
-          storage.remove(STORAGE_KEYS.AUTH_TOKEN);
+          clearAuthStore();
           queryClient.clear();
         }
 

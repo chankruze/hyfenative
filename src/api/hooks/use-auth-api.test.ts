@@ -1,8 +1,7 @@
 import { QUERY_KEYS } from '@/constants';
 import { useSendOtp, useVerifyOtp } from '@/api/hooks/use-auth-api';
 import authApi from '@/api/endpoints/auth';
-import { storage } from '@/lib/storage';
-import { STORAGE_KEYS } from '@/lib/storage/keys';
+import { useAuthStore } from '@/stores/use-auth-store';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 jest.mock('@tanstack/react-query', () => ({
@@ -18,18 +17,21 @@ jest.mock('@/api/endpoints/auth', () => ({
   },
 }));
 
-jest.mock('@/lib/storage', () => ({
-  storage: {
-    set: jest.fn(),
-  },
+jest.mock('@/stores/use-auth-store', () => ({
+  useAuthStore: jest.fn(),
 }));
 
 describe('use-auth-api hooks', () => {
   const invalidateQueries = jest.fn();
+  const hydrateFromVerifyResponse = jest.fn();
 
   beforeEach(() => {
     jest.clearAllMocks();
     (useQueryClient as jest.Mock).mockReturnValue({ invalidateQueries });
+    (useAuthStore as unknown as jest.Mock).mockImplementation(
+      (selector: (state: { hydrateFromVerifyResponse: typeof hydrateFromVerifyResponse }) => unknown) =>
+        selector({ hydrateFromVerifyResponse }),
+    );
   });
 
   it('useSendOtp wires mutationFn to authApi.sendOtp and forwards callbacks', () => {
@@ -51,7 +53,7 @@ describe('use-auth-api hooks', () => {
     expect(onError).toHaveBeenCalledWith(error);
   });
 
-  it('useVerifyOtp wires mutationFn to authApi.verifyOtp and persists token on success', () => {
+  it('useVerifyOtp wires mutationFn to authApi.verifyOtp and hydrates auth token on success', () => {
     const onSuccess = jest.fn();
     const onError = jest.fn();
 
@@ -70,10 +72,9 @@ describe('use-auth-api hooks', () => {
     config.onSuccess(data);
     config.onError(error);
 
-    expect(storage.set).toHaveBeenCalledWith(
-      STORAGE_KEYS.AUTH_TOKEN,
-      'token_123',
-    );
+    expect(hydrateFromVerifyResponse).toHaveBeenCalledWith({
+      token: 'token_123',
+    });
     expect(invalidateQueries).toHaveBeenCalledWith({
       queryKey: [QUERY_KEYS.AUTH_ME],
     });
