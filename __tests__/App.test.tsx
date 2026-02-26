@@ -45,7 +45,11 @@ jest.mock('@/lib/query-client', () => ({
   persister: {},
 }));
 
-jest.mock('@/api/hooks/use-auth-api', () => ({
+jest.mock('@/providers/app-error-boundary', () => ({
+  AppErrorBoundary: ({ children }: { children: React.ReactNode }) => children,
+}));
+
+jest.mock('@/api/endpoints/auth/use-auth-api', () => ({
   useSendOtp: () => ({
     isPending: false,
     error: null,

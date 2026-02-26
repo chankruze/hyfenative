@@ -3,6 +3,7 @@ import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { RootNavigator } from '@/navigation/root-navigator';
 import { queryClient, persister } from '@/lib/query-client';
+import { AppErrorBoundary } from '@/providers/app-error-boundary';
 
 const navigationTheme = {
   ...DefaultTheme,
@@ -18,11 +19,13 @@ export default function App() {
       client={queryClient}
       persistOptions={{ persister }}
     >
-      <SafeAreaProvider>
-        <NavigationContainer theme={navigationTheme}>
-          <RootNavigator />
-        </NavigationContainer>
-      </SafeAreaProvider>
+      <AppErrorBoundary>
+        <SafeAreaProvider>
+          <NavigationContainer theme={navigationTheme}>
+            <RootNavigator />
+          </NavigationContainer>
+        </SafeAreaProvider>
+      </AppErrorBoundary>
     </PersistQueryClientProvider>
   );
 }
