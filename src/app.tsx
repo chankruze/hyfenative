@@ -13,7 +13,7 @@ const navigationTheme = {
   },
 };
 
-export default function App() {
+export const App = () => {
   return (
     <PersistQueryClientProvider
       client={queryClient}
@@ -28,4 +28,4 @@ export default function App() {
       </AppErrorBoundary>
     </PersistQueryClientProvider>
   );
-}
+};
