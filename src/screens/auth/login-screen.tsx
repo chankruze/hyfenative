@@ -10,6 +10,8 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSendOtp } from '@/api/endpoints/auth/use-auth-api';
 import { AppRoute } from '@/navigation/routes';
+import { useTheme } from '@/theme';
+import type { Theme } from '@/theme';
 import type { RootStackScreenProps } from '@/navigation/navigation-types';
 import type { OtpVia } from '@/api/endpoints/auth/otp.schema';
 
@@ -24,6 +26,9 @@ export function LoginScreen({ navigation }: Props) {
   const [identifier, setIdentifier] = useState('');
   const [via, setVia] = useState<OtpVia>('whatsapp');
   const [localError, setLocalError] = useState<string | null>(null);
+
+  const { theme } = useTheme();
+  const styles = createStyles(theme);
 
   const sendOtpMutation = useSendOtp();
 
@@ -78,7 +83,7 @@ export function LoginScreen({ navigation }: Props) {
             value={identifier}
             onChangeText={setIdentifier}
             placeholder="Phone or email"
-            placeholderTextColor="#7E8AA8"
+            placeholderTextColor={theme.colors.inputPlaceholder}
             style={styles.input}
             autoCapitalize="none"
             keyboardType="email-address"
@@ -118,7 +123,7 @@ export function LoginScreen({ navigation }: Props) {
             ]}
           >
             {sendOtpMutation.isPending ? (
-              <ActivityIndicator color="#0B1220" />
+              <ActivityIndicator color={theme.colors.textInverse} />
             ) : (
               <Text style={styles.primaryButtonText}>Continue</Text>
             )}
@@ -133,114 +138,111 @@ export function LoginScreen({ navigation }: Props) {
   );
 }
 
-const styles = StyleSheet.create({
-  safe: {
-    flex: 1,
-    backgroundColor: '#0B1220',
-  },
-  page: {
-    flex: 1,
-    paddingHorizontal: 20,
-    paddingVertical: 24,
-    justifyContent: 'space-between',
-    backgroundColor: '#0B1220',
-  },
-  hero: {
-    marginTop: 20,
-    gap: 10,
-  },
-  kicker: {
-    color: '#67E8F9',
-    fontSize: 12,
-    letterSpacing: 1.2,
-    fontWeight: '700',
-  },
-  title: {
-    color: '#F8FAFC',
-    fontSize: 32,
-    lineHeight: 38,
-    fontWeight: '800',
-  },
-  subtitle: {
-    color: '#CBD5E1',
-    fontSize: 15,
-    lineHeight: 22,
-  },
-  card: {
-    backgroundColor: '#111A2D',
-    borderColor: '#1E293B',
-    borderWidth: 1,
-    borderRadius: 16,
-    padding: 16,
-    gap: 10,
-  },
-  label: {
-    color: '#E2E8F0',
-    fontSize: 13,
-    fontWeight: '600',
-    marginTop: 2,
-  },
-  input: {
-    height: 48,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: '#27344E',
-    backgroundColor: '#0E1728',
-    color: '#F8FAFC',
-    paddingHorizontal: 14,
-    fontSize: 16,
-  },
-  viaRow: {
-    flexDirection: 'row',
-    gap: 8,
-  },
-  viaButton: {
-    flex: 1,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: '#27344E',
-    paddingVertical: 10,
-    alignItems: 'center',
-    backgroundColor: '#0E1728',
-  },
-  viaButtonActive: {
-    borderColor: '#67E8F9',
-    backgroundColor: '#123247',
-  },
-  viaText: {
-    color: '#AAB5CD',
-    fontSize: 12,
-    fontWeight: '700',
-  },
-  viaTextActive: {
-    color: '#9EEAFA',
-  },
-  error: {
-    color: '#FCA5A5',
-    fontSize: 13,
-    lineHeight: 18,
-  },
-  primaryButton: {
-    height: 48,
-    borderRadius: 12,
-    backgroundColor: '#67E8F9',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 4,
-  },
-  primaryButtonDisabled: {
-    opacity: 0.5,
-  },
-  primaryButtonText: {
-    color: '#0B1220',
-    fontSize: 15,
-    fontWeight: '800',
-  },
-  secondaryAction: {
-    textAlign: 'center',
-    color: '#67E8F9',
-    fontSize: 14,
-    fontWeight: '600',
-    marginTop: 8,
-  },
-});
+const createStyles = (theme: Theme) =>
+  StyleSheet.create({
+    safe: {
+      flex: 1,
+      backgroundColor: theme.colors.background,
+    },
+    page: {
+      flex: 1,
+      paddingHorizontal: theme.spacing.lg,
+      paddingVertical: theme.spacing.xl,
+      justifyContent: 'space-between',
+      backgroundColor: theme.colors.background,
+    },
+    hero: {
+      marginTop: theme.spacing.lg,
+      gap: 10,
+    },
+    kicker: {
+      color: theme.colors.primary,
+      ...theme.typography.kicker,
+    },
+    title: {
+      color: theme.colors.text,
+      fontSize: 32,
+      lineHeight: 38,
+      fontWeight: '800',
+    },
+    subtitle: {
+      color: theme.colors.textMuted,
+      fontSize: 15,
+      lineHeight: 22,
+    },
+    card: {
+      backgroundColor: theme.colors.surface,
+      borderColor: theme.colors.border,
+      borderWidth: 1,
+      borderRadius: theme.radius.lg,
+      padding: theme.spacing.md,
+      gap: 10,
+    },
+    label: {
+      color: theme.colors.textMuted,
+      ...theme.typography.label,
+      marginTop: 2,
+    },
+    input: {
+      height: 48,
+      borderRadius: theme.radius.md,
+      borderWidth: 1,
+      borderColor: theme.colors.borderStrong,
+      backgroundColor: theme.colors.inputBackground,
+      color: theme.colors.text,
+      paddingHorizontal: 14,
+      fontSize: 16,
+    },
+    viaRow: {
+      flexDirection: 'row',
+      gap: theme.spacing.xs,
+    },
+    viaButton: {
+      flex: 1,
+      borderRadius: theme.radius.sm,
+      borderWidth: 1,
+      borderColor: theme.colors.borderStrong,
+      paddingVertical: 10,
+      alignItems: 'center',
+      backgroundColor: theme.colors.surfaceAlt,
+    },
+    viaButtonActive: {
+      borderColor: theme.colors.primary,
+      backgroundColor: theme.colors.primaryMuted,
+    },
+    viaText: {
+      color: theme.colors.textMuted,
+      fontSize: 12,
+      fontWeight: '700',
+    },
+    viaTextActive: {
+      color: theme.colors.accent,
+    },
+    error: {
+      color: theme.colors.error,
+      fontSize: 13,
+      lineHeight: 18,
+    },
+    primaryButton: {
+      height: 48,
+      borderRadius: theme.radius.md,
+      backgroundColor: theme.colors.primary,
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginTop: 4,
+    },
+    primaryButtonDisabled: {
+      opacity: 0.5,
+    },
+    primaryButtonText: {
+      color: theme.colors.textInverse,
+      ...theme.typography.button,
+    },
+    secondaryAction: {
+      textAlign: 'center',
+      color: theme.colors.primary,
+      fontSize: 14,
+      fontWeight: '600',
+      marginTop: theme.spacing.xs,
+    },
+  });
