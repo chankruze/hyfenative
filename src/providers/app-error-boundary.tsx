@@ -2,8 +2,9 @@ import { createContext, ErrorInfo, useCallback, useContext } from 'react';
 import { useQueryErrorResetBoundary } from '@tanstack/react-query';
 import { ErrorBoundary, FallbackProps } from 'react-error-boundary';
 import { ErrorFallback } from '@/components/error-fallback';
-import { reportError } from '@/lib/error-reporting';
+import { reportError } from '@/lib/error/reporting';
 import { resetAppState } from '@/lib/reset-app';
+import { normalizeError } from '@/lib/error/normalize';
 
 type Props = {
   children: React.ReactNode;
@@ -18,8 +19,13 @@ const RetryContext = createContext<
 const AppBoundaryFallback = ({ error, resetErrorBoundary }: FallbackProps) => {
   const retry = useContext(RetryContext);
 
+  const normalizedError = normalizeError(error);
+
   return (
-    <ErrorFallback error={error} onRetry={() => retry(resetErrorBoundary)} />
+    <ErrorFallback
+      error={normalizedError}
+      onRetry={() => retry(resetErrorBoundary)}
+    />
   );
 };
 
