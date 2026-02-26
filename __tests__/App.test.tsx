@@ -45,6 +45,19 @@ jest.mock('@/lib/query-client', () => ({
   persister: {},
 }));
 
+jest.mock('@/api/hooks/use-auth-api', () => ({
+  useSendOtp: () => ({
+    isPending: false,
+    error: null,
+    mutateAsync: jest.fn(),
+  }),
+  useVerifyOtp: () => ({
+    isPending: false,
+    error: null,
+    mutateAsync: jest.fn(),
+  }),
+}));
+
 test('renders correctly', async () => {
   await ReactTestRenderer.act(async () => {
     ReactTestRenderer.create(<App />);

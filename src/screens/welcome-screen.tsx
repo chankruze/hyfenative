@@ -33,7 +33,7 @@ export function WelcomeScreen({ navigation }: Props) {
             style={styles.link}
             onPress={() => navigation.navigate(AppRoute.Login)}
           >
-            Go to login placeholder
+            Continue to login
           </Text>
         </View>
       </View>
