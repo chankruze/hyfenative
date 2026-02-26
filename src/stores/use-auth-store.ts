@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 import { storage, zustandMMKVStorage } from '@/lib/storage';
 import { STORAGE_KEYS } from '@/lib/storage/keys';
+import { registerStoreResetter } from './store-reset-registry';
 
 interface AuthState {
   accessToken: string | null;
@@ -47,3 +48,5 @@ export const selectIsLoggedIn = (state: AuthState) => Boolean(state.accessToken)
 
 export const getAccessTokenFromStore = () => useAuthStore.getState().accessToken;
 export const clearAuthStore = () => useAuthStore.getState().clearAuth();
+
+registerStoreResetter(clearAuthStore);

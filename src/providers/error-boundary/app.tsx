@@ -1,0 +1,68 @@
+import { createContext, ErrorInfo, useCallback, useContext } from 'react';
+import { useQueryErrorResetBoundary } from '@tanstack/react-query';
+import { ErrorBoundary, FallbackProps } from 'react-error-boundary';
+import { ErrorFallback } from './fallback';
+import { reportError } from '@/lib/error/reporting';
+import { resetAppState } from '@/lib/reset-app';
+import { normalizeError } from '@/lib/error/normalize';
+
+type Props = {
+  children: React.ReactNode;
+};
+
+const RetryContext = createContext<
+  (resetErrorBoundary: () => void) => Promise<void>
+>(async resetErrorBoundary => {
+  resetErrorBoundary();
+});
+
+const AppBoundaryFallback = ({ error, resetErrorBoundary }: FallbackProps) => {
+  const retry = useContext(RetryContext);
+
+  const normalizedError = normalizeError(error);
+
+  return (
+    <ErrorFallback
+      error={normalizedError}
+      onRetry={() => retry(resetErrorBoundary)}
+    />
+  );
+};
+
+export const AppErrorBoundary = ({ children }: Props) => {
+  const { reset: resetQueryErrorBoundary } = useQueryErrorResetBoundary();
+
+  const handleError = useCallback((error: unknown, info: ErrorInfo) => {
+    const normalizedError =
+      error instanceof Error
+        ? error
+        : new Error(typeof error === 'string' ? error : 'Unknown error');
+
+    reportError(normalizedError, {
+      scope: 'global-error-boundary',
+      componentStack: info.componentStack ?? undefined,
+    }).catch(reportingError => {
+      console.error('Failed to report error', reportingError);
+    });
+  }, []);
+
+  const handleRetry = useCallback(
+    async (resetErrorBoundary: () => void) => {
+      await resetAppState();
+      resetQueryErrorBoundary();
+      resetErrorBoundary();
+    },
+    [resetQueryErrorBoundary],
+  );
+
+  return (
+    <RetryContext.Provider value={handleRetry}>
+      <ErrorBoundary
+        onError={handleError}
+        FallbackComponent={AppBoundaryFallback}
+      >
+        {children}
+      </ErrorBoundary>
+    </RetryContext.Provider>
+  );
+};

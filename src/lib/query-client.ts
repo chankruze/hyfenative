@@ -1,5 +1,6 @@
 import { QueryClient } from '@tanstack/react-query';
 import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister';
+import { STORAGE_KEYS } from './storage/keys';
 import { asyncStorage } from './storage';
 
 export const queryClient = new QueryClient({
@@ -18,5 +19,5 @@ export const queryClient = new QueryClient({
 // Set up persistence
 export const persister = createAsyncStoragePersister({
   storage: asyncStorage,
-  key: 'TANSTACK_QUERY_CACHE', // storage key
+  key: STORAGE_KEYS.REACT_QUERY_CACHE, // storage key
 });
