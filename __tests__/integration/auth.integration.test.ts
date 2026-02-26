@@ -1,11 +1,8 @@
 import { describeLive, optionalEnv, requiredEnv } from '@/test/live-test-utils';
 
-jest.mock('@/lib/storage', () => ({
-  storage: {
-    getString: jest.fn(),
-    set: jest.fn(),
-    remove: jest.fn(),
-  },
+jest.mock('@/stores/use-auth-store', () => ({
+  getAccessTokenFromStore: jest.fn(() => null),
+  clearAuthStore: jest.fn(),
 }));
 
 jest.mock('@/lib/query-client', () => ({

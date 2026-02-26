@@ -2,8 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { QUERY_KEYS } from '@/constants';
 import authApi from '@/api/endpoints/auth';
 import type { ApiRequestError } from '@/api/types';
-import { storage } from '@/lib/storage';
-import { STORAGE_KEYS } from '@/lib/storage/keys';
+import { useAuthStore } from '@/stores/use-auth-store';
 import type {
   SendOtpPayload,
   SendOtpResponse,
@@ -36,6 +35,9 @@ export const useVerifyOtp = ({
   onError?: (error: ApiRequestError) => void;
 } = {}) => {
   const queryClient = useQueryClient();
+  const hydrateFromVerifyResponse = useAuthStore(
+    state => state.hydrateFromVerifyResponse,
+  );
 
   return useMutation<VerifyOtpResponse, ApiRequestError, VerifyOtpPayload>({
     mutationFn: authApi.verifyOtp,
@@ -47,7 +49,7 @@ export const useVerifyOtp = ({
         'token' in authPayload &&
         typeof authPayload.token === 'string'
       ) {
-        storage.set(STORAGE_KEYS.AUTH_TOKEN, authPayload.token);
+        hydrateFromVerifyResponse({ token: authPayload.token });
       }
       queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.AUTH_ME] });
       onSuccess?.(data);
