@@ -1,6 +1,6 @@
 import { QUERY_KEYS } from '@/constants';
-import { useSendOtp, useVerifyOtp } from '@/api/hooks/use-auth-api';
-import authApi from '@/api/endpoints/auth';
+import { useSendOtp, useVerifyOtp } from '@/api/endpoints/auth/use-auth-api';
+import { sendOtp, verifyOtp } from '@/api/endpoints/auth';
 import { useAuthStore } from '@/stores/use-auth-store';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
@@ -29,12 +29,15 @@ describe('use-auth-api hooks', () => {
     jest.clearAllMocks();
     (useQueryClient as jest.Mock).mockReturnValue({ invalidateQueries });
     (useAuthStore as unknown as jest.Mock).mockImplementation(
-      (selector: (state: { hydrateFromVerifyResponse: typeof hydrateFromVerifyResponse }) => unknown) =>
-        selector({ hydrateFromVerifyResponse }),
+      (
+        selector: (state: {
+          hydrateFromVerifyResponse: typeof hydrateFromVerifyResponse;
+        }) => unknown,
+      ) => selector({ hydrateFromVerifyResponse }),
     );
   });
 
-  it('useSendOtp wires mutationFn to authApi.sendOtp and forwards callbacks', () => {
+  it('useSendOtp wires mutationFn to sendOtp and forwards callbacks', () => {
     const onSuccess = jest.fn();
     const onError = jest.fn();
 
@@ -42,7 +45,7 @@ describe('use-auth-api hooks', () => {
 
     expect(useMutation).toHaveBeenCalledTimes(1);
     const config = (useMutation as jest.Mock).mock.calls[0][0];
-    expect(config.mutationFn).toBe(authApi.sendOtp);
+    expect(config.mutationFn).toBe(sendOtp);
 
     const data = { success: true };
     const error = new Error('failed');
@@ -53,7 +56,7 @@ describe('use-auth-api hooks', () => {
     expect(onError).toHaveBeenCalledWith(error);
   });
 
-  it('useVerifyOtp wires mutationFn to authApi.verifyOtp and hydrates auth token on success', () => {
+  it('useVerifyOtp wires mutationFn to verifyOtp and hydrates auth token on success', () => {
     const onSuccess = jest.fn();
     const onError = jest.fn();
 
@@ -61,7 +64,7 @@ describe('use-auth-api hooks', () => {
 
     expect(useMutation).toHaveBeenCalledTimes(1);
     const config = (useMutation as jest.Mock).mock.calls[0][0];
-    expect(config.mutationFn).toBe(authApi.verifyOtp);
+    expect(config.mutationFn).toBe(verifyOtp);
 
     const data = {
       success: true,

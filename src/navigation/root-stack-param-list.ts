@@ -1,5 +1,5 @@
 import { AppRoute } from '@/navigation/routes';
-import type { OtpVia } from '@/schemas/domain/otp.schema';
+import type { OtpVia } from '@/api/endpoints/auth/otp.schema';
 
 export type RootStackParamList = {
   [AppRoute.Welcome]: undefined;

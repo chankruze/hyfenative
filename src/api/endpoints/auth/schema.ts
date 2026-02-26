@@ -1,10 +1,10 @@
-import { z } from "zod";
-import { ApiBaseSchema, ApiKeyedResponseSchema } from "@/schemas/api.schema";
-import { OtpPortalSchema, OtpViaSchema } from "@/schemas/domain/otp.schema";
+import { z } from 'zod';
+import { ApiBaseSchema, ApiKeyedResponseSchema } from '@/api/schema';
+import { OtpPortalSchema, OtpViaSchema } from './otp.schema';
 
 export const SendOtpPayloadSchema = z.object({
   auth: z.object({
-    identifier: z.string().min(1, "Identifier is required"),
+    identifier: z.string().min(1, 'Identifier is required'),
     via: OtpViaSchema,
     portal: OtpPortalSchema,
   }),
@@ -12,9 +12,9 @@ export const SendOtpPayloadSchema = z.object({
 
 export const VerifyOtpPayloadSchema = z.object({
   auth: z.object({
-    identifier: z.string().min(1, "Identifier is required"),
+    identifier: z.string().min(1, 'Identifier is required'),
     via: OtpViaSchema,
-    code: z.string().min(1, "OTP code is required"),
+    code: z.string().min(1, 'OTP code is required'),
     portal: OtpPortalSchema,
   }),
 });
@@ -22,11 +22,11 @@ export const VerifyOtpPayloadSchema = z.object({
 export const SendOtpResponseSchema = ApiBaseSchema;
 
 export const VerifyOtpResponseSchema = ApiKeyedResponseSchema(
-  "auth",
+  'auth',
   z.object({
     token: z.string(),
     expiresIn: z.number(),
-  })
+  }),
 );
 
 export type SendOtpPayload = z.infer<typeof SendOtpPayloadSchema>;

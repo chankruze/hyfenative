@@ -8,10 +8,10 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useSendOtp } from '@/api/hooks/use-auth-api';
+import { useSendOtp } from '@/api/endpoints/auth/use-auth-api';
 import { AppRoute } from '@/navigation/routes';
 import type { RootStackScreenProps } from '@/navigation/navigation-types';
-import type { OtpVia } from '@/schemas/domain/otp.schema';
+import type { OtpVia } from '@/api/endpoints/auth/otp.schema';
 
 const OTP_VIA_OPTIONS: OtpVia[] = ['whatsapp', 'sms', 'email'];
 const OTP_PORTAL = 'customer' as const;
@@ -28,7 +28,8 @@ export function LoginScreen({ navigation }: Props) {
   const sendOtpMutation = useSendOtp();
 
   const canSubmit = useMemo(
-    () => normalizeIdentifier(identifier).length > 0 && !sendOtpMutation.isPending,
+    () =>
+      normalizeIdentifier(identifier).length > 0 && !sendOtpMutation.isPending,
     [identifier, sendOtpMutation.isPending],
   );
 
@@ -93,7 +94,9 @@ export function LoginScreen({ navigation }: Props) {
                   onPress={() => setVia(option)}
                   style={[styles.viaButton, isActive && styles.viaButtonActive]}
                 >
-                  <Text style={[styles.viaText, isActive && styles.viaTextActive]}>
+                  <Text
+                    style={[styles.viaText, isActive && styles.viaTextActive]}
+                  >
                     {option.toUpperCase()}
                   </Text>
                 </Pressable>
@@ -102,12 +105,17 @@ export function LoginScreen({ navigation }: Props) {
           </View>
 
           {localError ? <Text style={styles.error}>{localError}</Text> : null}
-          {mutationError ? <Text style={styles.error}>{mutationError}</Text> : null}
+          {mutationError ? (
+            <Text style={styles.error}>{mutationError}</Text>
+          ) : null}
 
           <Pressable
             onPress={onContinue}
             disabled={!canSubmit}
-            style={[styles.primaryButton, !canSubmit && styles.primaryButtonDisabled]}
+            style={[
+              styles.primaryButton,
+              !canSubmit && styles.primaryButtonDisabled,
+            ]}
           >
             {sendOtpMutation.isPending ? (
               <ActivityIndicator color="#0B1220" />

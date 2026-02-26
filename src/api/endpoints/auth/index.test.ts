@@ -1,9 +1,9 @@
-import authApi from '@/api/endpoints/auth';
+import { sendOtp, verifyOtp } from '@/api/endpoints/auth';
 import { postWithSchema } from '@/api/request';
 import {
   SendOtpResponseSchema,
   VerifyOtpResponseSchema,
-} from '@/schemas/api/auth.schema';
+} from '@/api/endpoints/auth/schema';
 
 jest.mock('@/api/request', () => ({
   postWithSchema: jest.fn(),
@@ -26,7 +26,7 @@ describe('authApi contract', () => {
       },
     } as const;
 
-    await expect(authApi.sendOtp(payload)).resolves.toEqual(response);
+    await expect(sendOtp(payload)).resolves.toEqual(response);
 
     expect(postWithSchema).toHaveBeenCalledWith(
       'auth/send_otp',
@@ -48,7 +48,7 @@ describe('authApi contract', () => {
       },
     } as const;
 
-    await expect(authApi.verifyOtp(payload)).resolves.toEqual(response);
+    await expect(verifyOtp(payload)).resolves.toEqual(response);
 
     expect(postWithSchema).toHaveBeenCalledWith(
       'auth/verify_otp',
@@ -59,7 +59,7 @@ describe('authApi contract', () => {
 
   it('sendOtp rejects invalid payload before request helper is called', async () => {
     expect(() =>
-      authApi.sendOtp({
+      sendOtp({
         auth: {
           identifier: '',
           via: 'sms',

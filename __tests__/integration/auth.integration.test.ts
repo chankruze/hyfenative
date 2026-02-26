@@ -29,7 +29,7 @@ jest.mock('react-native-config', () => {
 });
 
 import authApi from '@/api/endpoints/auth';
-import { OtpPortal, OtpVia } from '@/schemas/domain/otp.schema';
+import { OtpPortal, OtpVia } from '@/api/endpoints/auth/otp.schema';
 
 describeLive('live auth API integration', () => {
   const identifier = optionalEnv('TEST_AUTH_IDENTIFIER');

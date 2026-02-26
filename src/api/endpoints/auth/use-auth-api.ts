@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { QUERY_KEYS } from '@/constants';
-import authApi from '@/api/endpoints/auth';
+import { sendOtp, verifyOtp } from '@/api/endpoints/auth';
 import type { ApiRequestError } from '@/api/types';
 import { useAuthStore } from '@/stores/use-auth-store';
 import type {
@@ -8,7 +8,7 @@ import type {
   SendOtpResponse,
   VerifyOtpPayload,
   VerifyOtpResponse,
-} from '@/schemas/api/auth.schema';
+} from '@/api/endpoints/auth/schema';
 
 export const useSendOtp = ({
   onSuccess,
@@ -18,7 +18,7 @@ export const useSendOtp = ({
   onError?: (error: ApiRequestError) => void;
 } = {}) =>
   useMutation<SendOtpResponse, ApiRequestError, SendOtpPayload>({
-    mutationFn: authApi.sendOtp,
+    mutationFn: sendOtp,
     onSuccess: data => {
       onSuccess?.(data);
     },
@@ -40,7 +40,7 @@ export const useVerifyOtp = ({
   );
 
   return useMutation<VerifyOtpResponse, ApiRequestError, VerifyOtpPayload>({
-    mutationFn: authApi.verifyOtp,
+    mutationFn: verifyOtp,
     onSuccess: data => {
       const authPayload = data.auth;
       if (

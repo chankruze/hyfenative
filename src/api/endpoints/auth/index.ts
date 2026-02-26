@@ -8,9 +8,9 @@ import {
   type SendOtpResponse,
   type VerifyOtpPayload,
   type VerifyOtpResponse,
-} from '@/schemas/api/auth.schema';
+} from './schema';
 
-const sendOtp = (payload: SendOtpPayload): Promise<SendOtpResponse> => {
+export const sendOtp = (payload: SendOtpPayload): Promise<SendOtpResponse> => {
   const valid = SendOtpPayloadSchema.parse(payload);
   return postWithSchema<SendOtpPayload, typeof SendOtpResponseSchema>(
     'auth/send_otp',
@@ -19,7 +19,9 @@ const sendOtp = (payload: SendOtpPayload): Promise<SendOtpResponse> => {
   );
 };
 
-const verifyOtp = (payload: VerifyOtpPayload): Promise<VerifyOtpResponse> => {
+export const verifyOtp = (
+  payload: VerifyOtpPayload,
+): Promise<VerifyOtpResponse> => {
   const valid = VerifyOtpPayloadSchema.parse(payload);
   return postWithSchema<VerifyOtpPayload, typeof VerifyOtpResponseSchema>(
     'auth/verify_otp',
@@ -27,7 +29,3 @@ const verifyOtp = (payload: VerifyOtpPayload): Promise<VerifyOtpResponse> => {
     VerifyOtpResponseSchema,
   );
 };
-
-const authApi = { sendOtp, verifyOtp };
-
-export default authApi;

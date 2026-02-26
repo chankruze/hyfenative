@@ -8,7 +8,7 @@ import {
   View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useSendOtp, useVerifyOtp } from '@/api/hooks/use-auth-api';
+import { useSendOtp, useVerifyOtp } from '@/api/endpoints/auth/use-auth-api';
 import { AppRoute } from '@/navigation/routes';
 import type { RootStackScreenProps } from '@/navigation/navigation-types';
 
@@ -101,12 +101,17 @@ export function VerifyOtpScreen({ navigation, route }: Props) {
           {resendOtpMutation.error?.message ? (
             <Text style={styles.error}>{resendOtpMutation.error.message}</Text>
           ) : null}
-          {successMessage ? <Text style={styles.success}>{successMessage}</Text> : null}
+          {successMessage ? (
+            <Text style={styles.success}>{successMessage}</Text>
+          ) : null}
 
           <Pressable
             onPress={onVerify}
             disabled={!canVerify}
-            style={[styles.primaryButton, !canVerify && styles.primaryButtonDisabled]}
+            style={[
+              styles.primaryButton,
+              !canVerify && styles.primaryButtonDisabled,
+            ]}
           >
             {verifyOtpMutation.isPending ? (
               <ActivityIndicator color="#0B1220" />
