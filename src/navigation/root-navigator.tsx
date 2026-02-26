@@ -13,7 +13,7 @@ export function RootNavigator() {
       initialRouteName={AppRoute.Welcome}
       screenOptions={{
         headerShown: false,
-        animation: 'fade',
+        animation: 'slide_from_right',
       }}
     >
       <Stack.Screen name={AppRoute.Welcome} component={WelcomeScreen} />

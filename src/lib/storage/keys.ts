@@ -2,6 +2,7 @@ export const STORAGE_KEYS = {
   AUTH_TOKEN: 'auth_token',
   USER: 'user',
   AUTH_STORE: 'auth-store',
+  THEME_STORE: 'theme-store',
   REACT_QUERY_CACHE: 'TANSTACK_QUERY_CACHE',
 } as const;
 

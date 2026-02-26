@@ -1,5 +1,7 @@
 import React from 'react';
 import { View, Text, Button, StyleSheet } from 'react-native';
+import { useTheme } from '@/theme';
+import type { Theme } from '@/theme';
 
 type Props = {
   error: Error;
@@ -7,6 +9,9 @@ type Props = {
 };
 
 export const ErrorFallback = ({ error, onRetry }: Props) => {
+  const { theme } = useTheme();
+  const styles = createStyles(theme);
+
   const handleRetryPress = () => {
     onRetry().catch(retryError => {
       console.error('Retry from error boundary failed', retryError);
@@ -26,23 +31,24 @@ export const ErrorFallback = ({ error, onRetry }: Props) => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 24,
-    backgroundColor: '#0B1220',
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: '700',
-    marginBottom: 12,
-    color: '#F8FAFC',
-  },
-  message: {
-    marginBottom: 24,
-    textAlign: 'center',
-    color: '#CBD5E1',
-  },
-});
+const createStyles = (theme: Theme) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      padding: theme.spacing.xl,
+      backgroundColor: theme.colors.background,
+    },
+    title: {
+      fontSize: 20,
+      fontWeight: '700',
+      marginBottom: theme.spacing.sm,
+      color: theme.colors.text,
+    },
+    message: {
+      marginBottom: theme.spacing.xl,
+      textAlign: 'center',
+      color: theme.colors.textMuted,
+    },
+  });

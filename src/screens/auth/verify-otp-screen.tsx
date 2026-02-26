@@ -10,6 +10,8 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSendOtp, useVerifyOtp } from '@/api/endpoints/auth/use-auth-api';
 import { AppRoute } from '@/navigation/routes';
+import { useTheme } from '@/theme';
+import type { Theme } from '@/theme';
 import type { RootStackScreenProps } from '@/navigation/navigation-types';
 
 const OTP_PORTAL = 'customer' as const;
@@ -21,6 +23,9 @@ export function VerifyOtpScreen({ navigation, route }: Props) {
   const [code, setCode] = useState('');
   const [localError, setLocalError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
+  const { theme } = useTheme();
+  const styles = createStyles(theme);
 
   const verifyOtpMutation = useVerifyOtp();
   const resendOtpMutation = useSendOtp();
@@ -88,7 +93,7 @@ export function VerifyOtpScreen({ navigation, route }: Props) {
             value={code}
             onChangeText={setCode}
             placeholder="Enter OTP"
-            placeholderTextColor="#7E8AA8"
+            placeholderTextColor={theme.colors.inputPlaceholder}
             style={styles.input}
             keyboardType="number-pad"
             maxLength={6}
@@ -114,7 +119,7 @@ export function VerifyOtpScreen({ navigation, route }: Props) {
             ]}
           >
             {verifyOtpMutation.isPending ? (
-              <ActivityIndicator color="#0B1220" />
+              <ActivityIndicator color={theme.colors.textInverse} />
             ) : (
               <Text style={styles.primaryButtonText}>Verify OTP</Text>
             )}
@@ -126,7 +131,7 @@ export function VerifyOtpScreen({ navigation, route }: Props) {
             style={styles.ghostButton}
           >
             {resendOtpMutation.isPending ? (
-              <ActivityIndicator color="#67E8F9" />
+              <ActivityIndicator color={theme.colors.primary} />
             ) : (
               <Text style={styles.ghostButtonText}>Resend OTP</Text>
             )}
@@ -141,107 +146,101 @@ export function VerifyOtpScreen({ navigation, route }: Props) {
   );
 }
 
-const styles = StyleSheet.create({
-  safe: {
-    flex: 1,
-    backgroundColor: '#0B1220',
-  },
-  page: {
-    flex: 1,
-    paddingHorizontal: 20,
-    paddingVertical: 24,
-    justifyContent: 'space-between',
-    backgroundColor: '#0B1220',
-  },
-  hero: {
-    marginTop: 20,
-    gap: 8,
-  },
-  kicker: {
-    color: '#67E8F9',
-    fontSize: 12,
-    letterSpacing: 1.2,
-    fontWeight: '700',
-  },
-  title: {
-    color: '#F8FAFC',
-    fontSize: 30,
-    lineHeight: 36,
-    fontWeight: '800',
-  },
-  subtitle: {
-    color: '#CBD5E1',
-    fontSize: 14,
-    lineHeight: 20,
-  },
-  card: {
-    backgroundColor: '#111A2D',
-    borderColor: '#1E293B',
-    borderWidth: 1,
-    borderRadius: 16,
-    padding: 16,
-    gap: 10,
-  },
-  label: {
-    color: '#E2E8F0',
-    fontSize: 13,
-    fontWeight: '600',
-  },
-  input: {
-    height: 48,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: '#27344E',
-    backgroundColor: '#0E1728',
-    color: '#F8FAFC',
-    paddingHorizontal: 14,
-    fontSize: 18,
-    letterSpacing: 6,
-  },
-  error: {
-    color: '#FCA5A5',
-    fontSize: 13,
-    lineHeight: 18,
-  },
-  success: {
-    color: '#86EFAC',
-    fontSize: 13,
-    lineHeight: 18,
-  },
-  primaryButton: {
-    height: 48,
-    borderRadius: 12,
-    backgroundColor: '#67E8F9',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 4,
-  },
-  primaryButtonDisabled: {
-    opacity: 0.5,
-  },
-  primaryButtonText: {
-    color: '#0B1220',
-    fontSize: 15,
-    fontWeight: '800',
-  },
-  ghostButton: {
-    height: 44,
-    borderRadius: 12,
-    borderColor: '#2A3A5A',
-    borderWidth: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  ghostButtonText: {
-    color: '#67E8F9',
-    fontSize: 14,
-    fontWeight: '700',
-  },
-  secondaryAction: {
-    textAlign: 'center',
-    color: '#67E8F9',
-    fontSize: 14,
-    fontWeight: '600',
-    marginTop: 6,
-  },
-});
+const createStyles = (theme: Theme) =>
+  StyleSheet.create({
+    safe: {
+      flex: 1,
+      backgroundColor: theme.colors.background,
+    },
+    page: {
+      flex: 1,
+      paddingHorizontal: theme.spacing.lg,
+      paddingVertical: theme.spacing.xl,
+      justifyContent: 'space-between',
+      backgroundColor: theme.colors.background,
+    },
+    hero: {
+      marginTop: theme.spacing.lg,
+      gap: theme.spacing.xs,
+    },
+    kicker: {
+      color: theme.colors.primary,
+      ...theme.typography.kicker,
+    },
+    title: {
+      color: theme.colors.text,
+      ...theme.typography.h2,
+    },
+    subtitle: {
+      color: theme.colors.textMuted,
+      ...theme.typography.bodySm,
+    },
+    card: {
+      backgroundColor: theme.colors.surface,
+      borderColor: theme.colors.border,
+      borderWidth: 1,
+      borderRadius: theme.radius.lg,
+      padding: theme.spacing.md,
+      gap: 10,
+    },
+    label: {
+      color: theme.colors.textMuted,
+      ...theme.typography.label,
+    },
+    input: {
+      height: 48,
+      borderRadius: theme.radius.md,
+      borderWidth: 1,
+      borderColor: theme.colors.borderStrong,
+      backgroundColor: theme.colors.inputBackground,
+      color: theme.colors.text,
+      paddingHorizontal: 14,
+      fontSize: 18,
+      letterSpacing: 6,
+    },
+    error: {
+      color: theme.colors.error,
+      fontSize: 13,
+      lineHeight: 18,
+    },
+    success: {
+      color: theme.colors.success,
+      fontSize: 13,
+      lineHeight: 18,
+    },
+    primaryButton: {
+      height: 48,
+      borderRadius: theme.radius.md,
+      backgroundColor: theme.colors.primary,
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginTop: 4,
+    },
+    primaryButtonDisabled: {
+      opacity: 0.5,
+    },
+    primaryButtonText: {
+      color: theme.colors.textInverse,
+      ...theme.typography.button,
+    },
+    ghostButton: {
+      height: 44,
+      borderRadius: theme.radius.md,
+      borderColor: theme.colors.borderStrong,
+      borderWidth: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    ghostButtonText: {
+      color: theme.colors.primary,
+      fontSize: 14,
+      fontWeight: '700',
+    },
+    secondaryAction: {
+      textAlign: 'center',
+      color: theme.colors.primary,
+      fontSize: 14,
+      fontWeight: '600',
+      marginTop: 6,
+    },
+  });
