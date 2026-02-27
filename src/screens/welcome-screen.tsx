@@ -2,19 +2,31 @@ import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { AppRoute } from '@/navigation/routes';
 import { Screen } from '@/components/screen';
 import { useTheme } from '@/theme';
-import type { Theme, ThemePreference } from '@/theme';
+import type { Theme, ThemeFontScalePreference, ThemePreference } from '@/theme';
 import type { RootStackScreenProps } from '@/navigation/navigation-types';
 
 type Props = RootStackScreenProps<AppRoute.Welcome>;
 
 const THEME_OPTIONS: ThemePreference[] = ['light', 'dark', 'system'];
+const FONT_SCALE_OPTIONS: ThemeFontScalePreference[] = [
+  'small',
+  'medium',
+  'large',
+  'system',
+];
 
 export function WelcomeScreen({ navigation }: Props) {
-  const { theme, preference, setPreference } = useTheme();
+  const {
+    theme,
+    preference,
+    fontScalePreference,
+    setPreference,
+    setFontScalePreference,
+  } = useTheme();
   const styles = createStyles(theme);
 
   return (
-    <Screen>
+    <Screen scroll>
       <View style={styles.page}>
         <View style={styles.hero}>
           <Text style={styles.kicker}>
@@ -48,6 +60,31 @@ export function WelcomeScreen({ navigation }: Props) {
                 <Pressable
                   key={option}
                   onPress={() => setPreference(option)}
+                  style={[
+                    styles.themeOption,
+                    isSelected && styles.themeOptionSelected,
+                  ]}
+                >
+                  <Text
+                    style={[
+                      styles.themeOptionText,
+                      isSelected && styles.themeOptionTextSelected,
+                    ]}
+                  >
+                    {option.toUpperCase()}
+                  </Text>
+                </Pressable>
+              );
+            })}
+          </View>
+          <Text style={styles.themeSectionTitle}>Font scale</Text>
+          <View style={styles.themeRow}>
+            {FONT_SCALE_OPTIONS.map(option => {
+              const isSelected = option === fontScalePreference;
+              return (
+                <Pressable
+                  key={option}
+                  onPress={() => setFontScalePreference(option)}
                   style={[
                     styles.themeOption,
                     isSelected && styles.themeOptionSelected,
