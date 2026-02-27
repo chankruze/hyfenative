@@ -100,14 +100,8 @@ jest.mock('@/theme', () => {
 
   return {
     useThemeHydrated: () => true,
-    useTheme: () => ({
-      theme,
-      preference: 'system',
-      resolvedMode: 'dark',
-      brand: 'default',
-      setPreference: jest.fn(),
-      setBrand: jest.fn(),
-    }),
+    useThemeValue: () => theme,
+    useSyncSystemTheme: jest.fn(),
   };
 });
 

@@ -4,11 +4,12 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { RootNavigator } from '@/navigation/root-navigator';
 import { queryClient, persister } from '@/lib/query-client';
 import { AppErrorBoundary } from '@/providers/error-boundary';
-import { useTheme, useThemeHydrated } from '@/theme';
+import { useThemeHydrated, useThemeValue, useSyncSystemTheme } from '@/theme';
 
 export const App = () => {
+  useSyncSystemTheme();
   const hasHydrated = useThemeHydrated();
-  const { theme } = useTheme();
+  const theme = useThemeValue();
 
   if (!hasHydrated) {
     return null;

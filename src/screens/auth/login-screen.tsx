@@ -10,7 +10,7 @@ import {
 import { useSendOtp } from '@/api/endpoints/auth/use-auth-api';
 import { Screen } from '@/components/screen';
 import { AppRoute } from '@/navigation/routes';
-import { useTheme } from '@/theme';
+import { useThemeValue } from '@/theme';
 import type { Theme } from '@/theme';
 import type { RootStackScreenProps } from '@/navigation/navigation-types';
 import type { OtpVia } from '@/api/endpoints/auth/otp.schema';
@@ -27,7 +27,7 @@ export function LoginScreen({ navigation }: Props) {
   const [via, setVia] = useState<OtpVia>('whatsapp');
   const [localError, setLocalError] = useState<string | null>(null);
 
-  const { theme } = useTheme();
+  const theme = useThemeValue();
   const styles = createStyles(theme);
 
   const sendOtpMutation = useSendOtp();
@@ -148,7 +148,7 @@ const createStyles = (theme: Theme) =>
       gap: theme.spacing.lg,
     },
     hero: {
-      gap: 10,
+      gap: theme.spacing.xs,
     },
     kicker: {
       color: theme.colors.primary,
@@ -156,14 +156,11 @@ const createStyles = (theme: Theme) =>
     },
     title: {
       color: theme.colors.text,
-      fontSize: 32,
-      lineHeight: 38,
-      fontWeight: '800',
+      ...theme.typography.h1,
     },
     subtitle: {
       color: theme.colors.textMuted,
-      fontSize: 15,
-      lineHeight: 22,
+      ...theme.typography.bodySm,
     },
     card: {
       backgroundColor: theme.colors.surface,
@@ -171,12 +168,12 @@ const createStyles = (theme: Theme) =>
       borderWidth: 1,
       borderRadius: theme.radius.lg,
       padding: theme.spacing.md,
-      gap: 10,
+      gap: theme.spacing.xs,
     },
     label: {
       color: theme.colors.textMuted,
       ...theme.typography.label,
-      marginTop: 2,
+      marginTop: theme.spacing.xs / 4,
     },
     input: {
       height: 48,
@@ -185,8 +182,8 @@ const createStyles = (theme: Theme) =>
       borderColor: theme.colors.borderStrong,
       backgroundColor: theme.colors.inputBackground,
       color: theme.colors.text,
-      paddingHorizontal: 14,
-      fontSize: 16,
+      paddingHorizontal: theme.spacing.sm,
+      fontSize: theme.typography.body.fontSize,
     },
     viaRow: {
       flexDirection: 'row',
@@ -197,7 +194,7 @@ const createStyles = (theme: Theme) =>
       borderRadius: theme.radius.sm,
       borderWidth: 1,
       borderColor: theme.colors.borderStrong,
-      paddingVertical: 10,
+      paddingVertical: theme.spacing.xs,
       alignItems: 'center',
       backgroundColor: theme.colors.surfaceAlt,
     },
@@ -207,16 +204,16 @@ const createStyles = (theme: Theme) =>
     },
     viaText: {
       color: theme.colors.textMuted,
-      fontSize: 12,
-      fontWeight: '700',
+      fontSize: theme.typography.kicker.fontSize,
+      fontWeight: theme.typography.kicker.fontWeight,
     },
     viaTextActive: {
       color: theme.colors.accent,
     },
     error: {
       color: theme.colors.error,
-      fontSize: 13,
-      lineHeight: 18,
+      fontSize: theme.typography.label.fontSize,
+      lineHeight: theme.typography.label.lineHeight,
     },
     primaryButton: {
       height: 48,
@@ -224,7 +221,7 @@ const createStyles = (theme: Theme) =>
       backgroundColor: theme.colors.primary,
       alignItems: 'center',
       justifyContent: 'center',
-      marginTop: 4,
+      marginTop: theme.spacing.xs / 2,
     },
     primaryButtonDisabled: {
       opacity: 0.5,
@@ -236,8 +233,8 @@ const createStyles = (theme: Theme) =>
     secondaryAction: {
       textAlign: 'center',
       color: theme.colors.primary,
-      fontSize: 14,
-      fontWeight: '600',
+      fontSize: theme.typography.label.fontSize,
+      fontWeight: theme.typography.label.fontWeight,
       marginTop: theme.spacing.xs,
     },
     blankSpace: {
