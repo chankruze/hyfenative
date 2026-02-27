@@ -7,6 +7,7 @@ import {
   TextInput,
   View,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { useSendOtp, useVerifyOtp } from '@/api/endpoints/auth/use-auth-api';
 import { Screen } from '@/components/screen';
 import { AppRoute } from '@/navigation/routes';
@@ -19,6 +20,7 @@ const OTP_PORTAL = 'customer' as const;
 type Props = RootStackScreenProps<AppRoute.VerifyOtp>;
 
 export function VerifyOtpScreen({ navigation, route }: Props) {
+  const { t } = useTranslation();
   const { identifier, via } = route.params;
   const [code, setCode] = useState('');
   const [localError, setLocalError] = useState<string | null>(null);
@@ -38,7 +40,7 @@ export function VerifyOtpScreen({ navigation, route }: Props) {
   const onVerify = async () => {
     const normalizedCode = code.trim();
     if (!normalizedCode) {
-      setLocalError('Please enter OTP code.');
+      setLocalError(t('auth.validateOtp'));
       return;
     }
 
@@ -54,7 +56,7 @@ export function VerifyOtpScreen({ navigation, route }: Props) {
           portal: OTP_PORTAL,
         },
       });
-      setSuccessMessage('Verified successfully. Token is now stored.');
+      setSuccessMessage(t('auth.verifySuccess'));
     } catch {
       // Error is handled through mutation state.
     }
@@ -71,7 +73,7 @@ export function VerifyOtpScreen({ navigation, route }: Props) {
           portal: OTP_PORTAL,
         },
       });
-      setSuccessMessage('A fresh OTP has been sent.');
+      setSuccessMessage(t('auth.resendSuccess'));
     } catch {
       // Error is handled through mutation state.
     }
@@ -81,18 +83,22 @@ export function VerifyOtpScreen({ navigation, route }: Props) {
     <Screen keyboardAware scroll>
       <View style={styles.page}>
         <View style={styles.hero}>
-          <Text style={styles.kicker}>Verify OTP</Text>
-          <Text style={styles.title}>Enter code to finish sign in</Text>
-          <Text style={styles.subtitle}>Identifier: {identifier}</Text>
-          <Text style={styles.subtitle}>Delivery: {via.toUpperCase()}</Text>
+          <Text style={styles.kicker}>{t('auth.verifyKicker')}</Text>
+          <Text style={styles.title}>{t('auth.verifyTitle')}</Text>
+          <Text style={styles.subtitle}>
+            {t('auth.verifyIdentifier', { identifier })}
+          </Text>
+          <Text style={styles.subtitle}>
+            {t('auth.verifyDelivery', { via: via.toUpperCase() })}
+          </Text>
         </View>
 
         <View style={styles.card}>
-          <Text style={styles.label}>One-time code</Text>
+          <Text style={styles.label}>{t('auth.otpLabel')}</Text>
           <TextInput
             value={code}
             onChangeText={setCode}
-            placeholder="Enter OTP"
+            placeholder={t('auth.otpPlaceholder')}
             placeholderTextColor={theme.colors.inputPlaceholder}
             style={styles.input}
             keyboardType="number-pad"
@@ -121,7 +127,7 @@ export function VerifyOtpScreen({ navigation, route }: Props) {
             {verifyOtpMutation.isPending ? (
               <ActivityIndicator color={theme.colors.textInverse} />
             ) : (
-              <Text style={styles.primaryButtonText}>Verify OTP</Text>
+              <Text style={styles.primaryButtonText}>{t('auth.verifyOtp')}</Text>
             )}
           </Pressable>
 
@@ -133,12 +139,12 @@ export function VerifyOtpScreen({ navigation, route }: Props) {
             {resendOtpMutation.isPending ? (
               <ActivityIndicator color={theme.colors.primary} />
             ) : (
-              <Text style={styles.ghostButtonText}>Resend OTP</Text>
+              <Text style={styles.ghostButtonText}>{t('auth.resendOtp')}</Text>
             )}
           </Pressable>
 
           <Pressable onPress={() => navigation.navigate(AppRoute.Login)}>
-            <Text style={styles.secondaryAction}>Change identifier</Text>
+            <Text style={styles.secondaryAction}>{t('auth.changeIdentifier')}</Text>
           </Pressable>
         </View>
       </View>
