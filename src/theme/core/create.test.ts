@@ -27,6 +27,23 @@ describe('createTheme typography scaling', () => {
     expect(theme.typography.body.lineHeight).toBe(22);
   });
 
+  it('reuses precomputed typography reference for fixed app scale', () => {
+    const first = createTheme({
+      mode: 'light',
+      brand: 'default',
+      fontScalePreference: 'medium',
+      systemFontScale: 1.4,
+    });
+    const second = createTheme({
+      mode: 'light',
+      brand: 'default',
+      fontScalePreference: 'medium',
+      systemFontScale: 2,
+    });
+
+    expect(first.typography).toBe(second.typography);
+  });
+
   it('uses device scale when preference is system', () => {
     const theme = createTheme({
       mode: 'dark',

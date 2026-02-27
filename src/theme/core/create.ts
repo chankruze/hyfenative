@@ -1,5 +1,8 @@
 import { resolveFontScale } from '../font/scale';
-import { buildTypography } from '../typography/build';
+import {
+  getCachedTypography,
+  precomputeTypographyScales,
+} from '../typography/build';
 import { fontFamiliesByBrand } from '../font/families';
 import { radius, spacing } from '../tokens/base';
 import { darkColors } from '../tokens/dark';
@@ -26,6 +29,17 @@ const colorPaletteByBrand: Record<
   },
 };
 
+const PRECOMPUTED_APP_SCALES = [
+  resolveFontScale('small', 1),
+  resolveFontScale('medium', 1),
+  resolveFontScale('large', 1),
+];
+
+Object.values(fontFamiliesByBrand).forEach(brandFonts => {
+  precomputeTypographyScales(brandFonts.light, PRECOMPUTED_APP_SCALES);
+  precomputeTypographyScales(brandFonts.dark, PRECOMPUTED_APP_SCALES);
+});
+
 export const createTheme = ({
   mode,
   brand,
@@ -39,7 +53,10 @@ export const createTheme = ({
 }): Theme => {
   const colors = colorPaletteByBrand[brand][mode];
   const fontScale = resolveFontScale(fontScalePreference, systemFontScale);
-  const typography = buildTypography(fontScale, fontFamiliesByBrand[brand][mode]);
+  const typography = getCachedTypography(
+    fontScale,
+    fontFamiliesByBrand[brand][mode],
+  );
 
   return {
     id: `${brand}-${mode}`,
