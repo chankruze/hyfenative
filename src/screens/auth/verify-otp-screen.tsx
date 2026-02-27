@@ -10,7 +10,7 @@ import {
 import { useSendOtp, useVerifyOtp } from '@/api/endpoints/auth/use-auth-api';
 import { Screen } from '@/components/screen';
 import { AppRoute } from '@/navigation/routes';
-import { useTheme } from '@/theme';
+import { useThemeValue } from '@/theme';
 import type { Theme } from '@/theme';
 import type { RootStackScreenProps } from '@/navigation/navigation-types';
 
@@ -24,7 +24,7 @@ export function VerifyOtpScreen({ navigation, route }: Props) {
   const [localError, setLocalError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  const { theme } = useTheme();
+  const theme = useThemeValue();
   const styles = createStyles(theme);
 
   const verifyOtpMutation = useVerifyOtp();

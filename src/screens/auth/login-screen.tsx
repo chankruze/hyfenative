@@ -10,7 +10,7 @@ import {
 import { useSendOtp } from '@/api/endpoints/auth/use-auth-api';
 import { Screen } from '@/components/screen';
 import { AppRoute } from '@/navigation/routes';
-import { useTheme } from '@/theme';
+import { useThemeValue } from '@/theme';
 import type { Theme } from '@/theme';
 import type { RootStackScreenProps } from '@/navigation/navigation-types';
 import type { OtpVia } from '@/api/endpoints/auth/otp.schema';
@@ -27,7 +27,7 @@ export function LoginScreen({ navigation }: Props) {
   const [via, setVia] = useState<OtpVia>('whatsapp');
   const [localError, setLocalError] = useState<string | null>(null);
 
-  const { theme } = useTheme();
+  const theme = useThemeValue();
   const styles = createStyles(theme);
 
   const sendOtpMutation = useSendOtp();

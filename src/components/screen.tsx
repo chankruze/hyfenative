@@ -18,7 +18,7 @@ import type {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import type { Edge } from 'react-native-safe-area-context';
-import { useTheme } from '@/theme';
+import { useThemeValue } from '@/theme';
 
 type ScreenProps = {
   children: ReactNode;
@@ -48,7 +48,7 @@ export const Screen = ({
   scrollProps,
   keyboardAvoidingProps,
 }: ScreenProps) => {
-  const { theme } = useTheme();
+  const theme = useThemeValue();
   const fadeAnim = useRef(new Animated.Value(animated ? 0 : 1)).current;
 
   useEffect(() => {

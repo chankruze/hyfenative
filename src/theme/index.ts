@@ -1,7 +1,7 @@
 export { createTheme } from './core/create';
 export { resolveFontScale } from './font/scale';
 export { themeStoreSelectors, useThemeStore } from './store';
-export { useTheme, useThemeHydrated } from './use-theme';
+export { useSyncSystemTheme, useThemeHydrated, useThemeValue } from './use-theme';
 export type {
   Theme,
   ThemeBrand,

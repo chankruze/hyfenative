@@ -1,7 +1,7 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { AppRoute } from '@/navigation/routes';
 import { Screen } from '@/components/screen';
-import { useTheme } from '@/theme';
+import { themeStoreSelectors, useThemeStore, useThemeValue } from '@/theme';
 import type { Theme, ThemeFontScalePreference, ThemePreference } from '@/theme';
 import type { RootStackScreenProps } from '@/navigation/navigation-types';
 
@@ -16,13 +16,15 @@ const FONT_SCALE_OPTIONS: ThemeFontScalePreference[] = [
 ];
 
 export function WelcomeScreen({ navigation }: Props) {
-  const {
-    theme,
-    preference,
-    fontScalePreference,
-    setPreference,
-    setFontScalePreference,
-  } = useTheme();
+  const theme = useThemeValue();
+  const preference = useThemeStore(themeStoreSelectors.preference);
+  const fontScalePreference = useThemeStore(
+    themeStoreSelectors.fontScalePreference,
+  );
+  const setPreference = useThemeStore(themeStoreSelectors.setPreference);
+  const setFontScalePreference = useThemeStore(
+    themeStoreSelectors.setFontScalePreference,
+  );
   const styles = createStyles(theme);
 
   return (

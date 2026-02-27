@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, Button, StyleSheet } from 'react-native';
-import { useTheme } from '@/theme';
+import { useThemeValue } from '@/theme';
 import type { Theme } from '@/theme';
 
 type Props = {
@@ -9,7 +9,7 @@ type Props = {
 };
 
 export const ErrorFallback = ({ error, onRetry }: Props) => {
-  const { theme } = useTheme();
+  const theme = useThemeValue();
   const styles = createStyles(theme);
 
   const handleRetryPress = () => {

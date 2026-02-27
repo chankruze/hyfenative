@@ -1,52 +1,27 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useColorScheme, useWindowDimensions } from 'react-native';
-import { createTheme } from './core/create';
 import { themeStoreSelectors, useThemeStore } from './store';
 import type { ThemeMode } from './types';
 
-export const useTheme = () => {
+export const useSyncSystemTheme = () => {
   const systemColorScheme = useColorScheme();
-  const preference = useThemeStore(themeStoreSelectors.preference);
-  const brand = useThemeStore(themeStoreSelectors.brand);
-  const fontScalePreference = useThemeStore(
-    themeStoreSelectors.fontScalePreference,
-  );
-  const setPreference = useThemeStore(themeStoreSelectors.setPreference);
-  const setBrand = useThemeStore(themeStoreSelectors.setBrand);
-  const setFontScalePreference = useThemeStore(
-    themeStoreSelectors.setFontScalePreference,
-  );
-  const { fontScale: systemFontScale } = useWindowDimensions();
-
-  const resolvedMode: ThemeMode =
-    preference === 'system'
-      ? systemColorScheme === 'dark'
-        ? 'dark'
-        : 'light'
-      : preference;
-
-  const theme = useMemo(
-    () =>
-      createTheme({
-        mode: resolvedMode,
-        brand,
-        fontScalePreference,
-        systemFontScale,
-      }),
-    [brand, fontScalePreference, resolvedMode, systemFontScale],
+  const { fontScale } = useWindowDimensions();
+  const setSystemMode = useThemeStore(themeStoreSelectors.setSystemMode);
+  const setSystemFontScale = useThemeStore(
+    themeStoreSelectors.setSystemFontScale,
   );
 
-  return {
-    theme,
-    preference,
-    resolvedMode,
-    brand,
-    fontScalePreference,
-    setPreference,
-    setBrand,
-    setFontScalePreference,
-  };
+  useEffect(() => {
+    const systemMode: ThemeMode = systemColorScheme === 'dark' ? 'dark' : 'light';
+    setSystemMode(systemMode);
+  }, [setSystemMode, systemColorScheme]);
+
+  useEffect(() => {
+    setSystemFontScale(fontScale);
+  }, [fontScale, setSystemFontScale]);
 };
+
+export const useThemeValue = () => useThemeStore(themeStoreSelectors.theme);
 
 export const useThemeHydrated = () => {
   const [hydrated, setHydrated] = useState(useThemeStore.persist.hasHydrated());
