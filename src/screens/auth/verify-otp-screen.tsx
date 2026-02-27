@@ -8,7 +8,7 @@ import {
   View,
 } from 'react-native';
 import { useSendOtp, useVerifyOtp } from '@/api/endpoints/auth/use-auth-api';
-import { Screen } from '@/components';
+import { Screen } from '@/components/screen';
 import { AppRoute } from '@/navigation/routes';
 import { useTheme } from '@/theme';
 import type { Theme } from '@/theme';

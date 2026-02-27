@@ -1,6 +1,6 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { AppRoute } from '@/navigation/routes';
-import { Screen } from '@/components';
+import { Screen } from '@/components/screen';
 import { useTheme } from '@/theme';
 import type { Theme, ThemePreference } from '@/theme';
 import type { RootStackScreenProps } from '@/navigation/navigation-types';
