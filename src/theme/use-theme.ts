@@ -1,15 +1,15 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useColorScheme } from 'react-native';
 import { createTheme } from './create-theme';
-import { selectThemeBrand, selectThemePreference, useThemeStore } from './theme-store';
+import { themeStoreSelectors, useThemeStore } from './store';
 import type { ThemeMode } from './types';
 
 export const useTheme = () => {
   const systemColorScheme = useColorScheme();
-  const preference = useThemeStore(selectThemePreference);
-  const brand = useThemeStore(selectThemeBrand);
-  const setPreference = useThemeStore(state => state.setPreference);
-  const setBrand = useThemeStore(state => state.setBrand);
+  const preference = useThemeStore(themeStoreSelectors.preference);
+  const brand = useThemeStore(themeStoreSelectors.brand);
+  const setPreference = useThemeStore(themeStoreSelectors.setPreference);
+  const setBrand = useThemeStore(themeStoreSelectors.setBrand);
 
   const resolvedMode: ThemeMode =
     preference === 'system'

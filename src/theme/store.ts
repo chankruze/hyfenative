@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 import { STORAGE_KEYS } from '@/lib/storage/keys';
 import { zustandMMKVStorage } from '@/lib/storage';
+import { registerStoreResetter } from '@/stores/store-reset-registry';
 import type { ThemeBrand, ThemePreference } from './types';
 
 type ThemeStoreState = {
@@ -35,9 +36,13 @@ export const useThemeStore = create<ThemeStoreState>()(
   ),
 );
 
-export const selectThemePreference = (state: ThemeStoreState) =>
-  state.preference;
-
-export const selectThemeBrand = (state: ThemeStoreState) => state.brand;
+export const themeStoreSelectors = {
+  preference: (state: ThemeStoreState) => state.preference,
+  brand: (state: ThemeStoreState) => state.brand,
+  setPreference: (state: ThemeStoreState) => state.setPreference,
+  setBrand: (state: ThemeStoreState) => state.setBrand,
+} as const;
 
 export const resetThemeStore = () => useThemeStore.setState(defaultThemeState);
+
+registerStoreResetter(resetThemeStore);
