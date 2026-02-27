@@ -1,5 +1,5 @@
 import { Platform } from 'react-native';
-import type { ThemeBrand, ThemeFontFamilies } from './types';
+import type { ThemeBrand, ThemeFontFamilies } from '../types';
 
 const systemSans = Platform.select({
   ios: 'System',

@@ -1,4 +1,4 @@
-import type { ThemeTypography } from './types';
+import type { ThemeTypography } from '../types';
 
 type BaseTypographyToken = {
   fontSize: number;

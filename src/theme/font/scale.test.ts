@@ -1,4 +1,4 @@
-import { resolveFontScale } from './font-scale';
+import { resolveFontScale } from './scale';
 
 describe('resolveFontScale', () => {
   it('returns system font scale in system mode', () => {

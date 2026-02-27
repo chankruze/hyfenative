@@ -1,5 +1,5 @@
-import { BASE_TYPOGRAPHY } from './typography-base';
-import type { ThemeFontFamilies, ThemeTypography } from './types';
+import { BASE_TYPOGRAPHY } from './base';
+import type { ThemeFontFamilies, ThemeTypography } from '../types';
 
 const scaleValue = (value: number, scale: number) => Math.round(value * scale);
 

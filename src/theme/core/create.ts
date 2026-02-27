@@ -1,16 +1,16 @@
-import { resolveFontScale } from './font-scale';
-import { buildTypography } from './build-typography';
-import { fontFamiliesByBrand } from './font-families';
-import { radius, spacing } from './tokens/base';
-import { darkColors } from './tokens/dark';
-import { lightColors } from './tokens/light';
-import { oceanDarkColors, oceanLightColors } from './tokens/ocean';
+import { resolveFontScale } from '../font/scale';
+import { buildTypography } from '../typography/build';
+import { fontFamiliesByBrand } from '../font/families';
+import { radius, spacing } from '../tokens/base';
+import { darkColors } from '../tokens/dark';
+import { lightColors } from '../tokens/light';
+import { oceanDarkColors, oceanLightColors } from '../tokens/ocean';
 import type {
   Theme,
   ThemeBrand,
   ThemeFontScalePreference,
   ThemeMode,
-} from './types';
+} from '../types';
 
 const colorPaletteByBrand: Record<
   ThemeBrand,

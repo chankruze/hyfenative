@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useColorScheme, useWindowDimensions } from 'react-native';
-import { createTheme } from './create-theme';
+import { createTheme } from './core/create';
 import { themeStoreSelectors, useThemeStore } from './store';
 import type { ThemeMode } from './types';
 

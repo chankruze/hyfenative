@@ -1,5 +1,5 @@
 import { PixelRatio } from 'react-native';
-import type { ThemeFontScalePreference } from './types';
+import type { ThemeFontScalePreference } from '../types';
 
 const APP_SCALE_MAP: Record<Exclude<ThemeFontScalePreference, 'system'>, number> = {
   small: 0.9,

@@ -1,4 +1,4 @@
-import { createTheme } from './create-theme';
+import { createTheme } from './create';
 
 describe('createTheme typography scaling', () => {
   it('uses medium app scale as baseline', () => {
