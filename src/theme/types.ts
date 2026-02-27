@@ -4,6 +4,8 @@ export type ThemePreference = ThemeMode | 'system';
 
 export type ThemeBrand = 'default' | 'ocean';
 
+export type ThemeFontScalePreference = 'system' | 'small' | 'medium' | 'large';
+
 export type ThemeColors = {
   background: string;
   surface: string;
@@ -31,42 +33,29 @@ export type ThemeSpacing = {
   xl: number;
 };
 
+export type ThemeFontFamilies = {
+  regular: string;
+  semibold: string;
+  bold: string;
+  extrabold: string;
+};
+
+export type ThemeTypographyVariant = {
+  fontSize: number;
+  fontWeight: '400' | '600' | '700' | '800';
+  fontFamily: string;
+  lineHeight?: number;
+  letterSpacing?: number;
+};
+
 export type ThemeTypography = {
-  kicker: {
-    fontSize: number;
-    letterSpacing: number;
-    fontWeight: '700';
-  };
-  h1: {
-    fontSize: number;
-    lineHeight: number;
-    fontWeight: '800';
-  };
-  h2: {
-    fontSize: number;
-    lineHeight: number;
-    fontWeight: '800';
-  };
-  body: {
-    fontSize: number;
-    lineHeight: number;
-    fontWeight: '400';
-  };
-  bodySm: {
-    fontSize: number;
-    lineHeight: number;
-    fontWeight: '400';
-  };
-  label: {
-    fontSize: number;
-    lineHeight: number;
-    fontWeight: '600';
-  };
-  button: {
-    fontSize: number;
-    lineHeight: number;
-    fontWeight: '800';
-  };
+  kicker: ThemeTypographyVariant;
+  h1: ThemeTypographyVariant;
+  h2: ThemeTypographyVariant;
+  body: ThemeTypographyVariant;
+  bodySm: ThemeTypographyVariant;
+  label: ThemeTypographyVariant;
+  button: ThemeTypographyVariant;
 };
 
 export type ThemeRadius = {
@@ -80,6 +69,8 @@ export type Theme = {
   mode: ThemeMode;
   brand: ThemeBrand;
   isDark: boolean;
+  fontScale: number;
+  fontScalePreference: ThemeFontScalePreference;
   colors: ThemeColors;
   spacing: ThemeSpacing;
   typography: ThemeTypography;

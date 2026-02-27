@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useColorScheme } from 'react-native';
+import { useColorScheme, useWindowDimensions } from 'react-native';
 import { createTheme } from './create-theme';
 import { themeStoreSelectors, useThemeStore } from './store';
 import type { ThemeMode } from './types';
@@ -8,8 +8,15 @@ export const useTheme = () => {
   const systemColorScheme = useColorScheme();
   const preference = useThemeStore(themeStoreSelectors.preference);
   const brand = useThemeStore(themeStoreSelectors.brand);
+  const fontScalePreference = useThemeStore(
+    themeStoreSelectors.fontScalePreference,
+  );
   const setPreference = useThemeStore(themeStoreSelectors.setPreference);
   const setBrand = useThemeStore(themeStoreSelectors.setBrand);
+  const setFontScalePreference = useThemeStore(
+    themeStoreSelectors.setFontScalePreference,
+  );
+  const { fontScale: systemFontScale } = useWindowDimensions();
 
   const resolvedMode: ThemeMode =
     preference === 'system'
@@ -23,8 +30,10 @@ export const useTheme = () => {
       createTheme({
         mode: resolvedMode,
         brand,
+        fontScalePreference,
+        systemFontScale,
       }),
-    [brand, resolvedMode],
+    [brand, fontScalePreference, resolvedMode, systemFontScale],
   );
 
   return {
@@ -32,8 +41,10 @@ export const useTheme = () => {
     preference,
     resolvedMode,
     brand,
+    fontScalePreference,
     setPreference,
     setBrand,
+    setFontScalePreference,
   };
 };
 
