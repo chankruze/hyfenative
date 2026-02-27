@@ -152,9 +152,9 @@ const createStyles = (theme: Theme) =>
     },
     cardTitle: {
       color: theme.colors.text,
-      fontSize: 18,
-      fontWeight: '700',
-      marginBottom: 4,
+      fontSize: theme.typography.body.fontSize + theme.spacing.xs / 4,
+      fontWeight: theme.typography.kicker.fontWeight,
+      marginBottom: theme.spacing.xs / 2,
     },
     point: {
       color: theme.colors.textMuted,
@@ -168,14 +168,14 @@ const createStyles = (theme: Theme) =>
     themeRow: {
       flexDirection: 'row',
       gap: theme.spacing.xs,
-      marginTop: 4,
+      marginTop: theme.spacing.xs / 2,
     },
     themeOption: {
       flex: 1,
       borderRadius: theme.radius.sm,
       borderWidth: 1,
       borderColor: theme.colors.borderStrong,
-      paddingVertical: 10,
+      paddingVertical: theme.spacing.xs,
       alignItems: 'center',
       backgroundColor: theme.colors.surfaceAlt,
     },
@@ -185,8 +185,8 @@ const createStyles = (theme: Theme) =>
     },
     themeOptionText: {
       color: theme.colors.textMuted,
-      fontSize: 12,
-      fontWeight: '700',
+      fontSize: theme.typography.kicker.fontSize,
+      fontWeight: theme.typography.kicker.fontWeight,
     },
     themeOptionTextSelected: {
       color: theme.colors.accent,
@@ -194,8 +194,8 @@ const createStyles = (theme: Theme) =>
     link: {
       color: theme.colors.primary,
       marginTop: theme.spacing.sm,
-      fontSize: 14,
-      fontWeight: '600',
+      fontSize: theme.typography.label.fontSize,
+      fontWeight: theme.typography.label.fontWeight,
     },
     blankSpace: {
       flex: 1,
