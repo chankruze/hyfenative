@@ -7,6 +7,7 @@ import {
   TextInput,
   View,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { useSendOtp } from '@/api/endpoints/auth/use-auth-api';
 import { Screen } from '@/components/screen';
 import { AppRoute } from '@/navigation/routes';
@@ -23,6 +24,7 @@ type Props = RootStackScreenProps<AppRoute.Login>;
 const normalizeIdentifier = (value: string) => value.trim();
 
 export function LoginScreen({ navigation }: Props) {
+  const { t } = useTranslation();
   const [identifier, setIdentifier] = useState('');
   const [via, setVia] = useState<OtpVia>('whatsapp');
   const [localError, setLocalError] = useState<string | null>(null);
@@ -43,7 +45,7 @@ export function LoginScreen({ navigation }: Props) {
   const onContinue = async () => {
     const normalized = normalizeIdentifier(identifier);
     if (!normalized) {
-      setLocalError('Please enter phone or email.');
+      setLocalError(t('auth.validateIdentifier'));
       return;
     }
 
@@ -70,25 +72,23 @@ export function LoginScreen({ navigation }: Props) {
     <Screen keyboardAware scroll>
       <View style={styles.page}>
         <View style={styles.hero}>
-          <Text style={styles.kicker}>Secure Sign In</Text>
-          <Text style={styles.title}>Continue with your identifier</Text>
-          <Text style={styles.subtitle}>
-            Enter mobile number or email and we will send a one-time code.
-          </Text>
+          <Text style={styles.kicker}>{t('auth.loginKicker')}</Text>
+          <Text style={styles.title}>{t('auth.loginTitle')}</Text>
+          <Text style={styles.subtitle}>{t('auth.loginSubtitle')}</Text>
         </View>
         <View style={styles.card}>
-          <Text style={styles.label}>Identifier</Text>
+          <Text style={styles.label}>{t('auth.identifierLabel')}</Text>
           <TextInput
             value={identifier}
             onChangeText={setIdentifier}
-            placeholder="Phone or email"
+            placeholder={t('auth.identifierPlaceholder')}
             placeholderTextColor={theme.colors.inputPlaceholder}
             style={styles.input}
             autoCapitalize="none"
             keyboardType="email-address"
           />
 
-          <Text style={styles.label}>Send OTP via</Text>
+          <Text style={styles.label}>{t('auth.sendOtpVia')}</Text>
           <View style={styles.viaRow}>
             {OTP_VIA_OPTIONS.map(option => {
               const isActive = option === via;
@@ -124,12 +124,12 @@ export function LoginScreen({ navigation }: Props) {
             {sendOtpMutation.isPending ? (
               <ActivityIndicator color={theme.colors.textInverse} />
             ) : (
-              <Text style={styles.primaryButtonText}>Continue</Text>
+              <Text style={styles.primaryButtonText}>{t('common.continue')}</Text>
             )}
           </Pressable>
 
           <Pressable onPress={() => navigation.navigate(AppRoute.Welcome)}>
-            <Text style={styles.secondaryAction}>Back to welcome</Text>
+            <Text style={styles.secondaryAction}>{t('auth.backToWelcome')}</Text>
           </Pressable>
         </View>
       </View>

@@ -61,6 +61,14 @@ jest.mock('@/providers/error-boundary', () => ({
   AppErrorBoundary: ({ children }: { children: React.ReactNode }) => children,
 }));
 
+jest.mock('@/i18n/use-sync-language', () => ({
+  useSyncLanguage: jest.fn(),
+}));
+
+jest.mock('@/stores/use-language-store', () => ({
+  useLanguageHydrated: () => true,
+}));
+
 jest.mock('@/theme', () => {
   const theme = {
     id: 'default-dark',

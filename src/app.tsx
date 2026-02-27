@@ -1,17 +1,27 @@
-import { NavigationContainer, DarkTheme, DefaultTheme } from '@react-navigation/native';
+import {
+  NavigationContainer,
+  DarkTheme,
+  DefaultTheme,
+} from '@react-navigation/native';
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { RootNavigator } from '@/navigation/root-navigator';
 import { queryClient, persister } from '@/lib/query-client';
 import { AppErrorBoundary } from '@/providers/error-boundary';
 import { useThemeHydrated, useThemeValue, useSyncSystemTheme } from '@/theme';
+import { useSyncLanguage } from '@/i18n/use-sync-language';
+import { useLanguageHydrated } from '@/stores/use-language-store';
+import '@/i18n';
 
 export const App = () => {
   useSyncSystemTheme();
-  const hasHydrated = useThemeHydrated();
+  useSyncLanguage();
+
+  const hasThemeHydrated = useThemeHydrated();
+  const hasLanguageHydrated = useLanguageHydrated();
   const theme = useThemeValue();
 
-  if (!hasHydrated) {
+  if (!hasThemeHydrated || !hasLanguageHydrated) {
     return null;
   }
 

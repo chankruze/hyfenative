@@ -1,8 +1,11 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { AppRoute } from '@/navigation/routes';
 import { Screen } from '@/components/screen';
 import { useThemePreferences, useThemeValue } from '@/theme';
 import type { Theme, ThemeFontScalePreference, ThemePreference } from '@/theme';
+import { languageStoreSelectors, useLanguageStore } from '@/stores/use-language-store';
+import type { AppLanguage } from '@/i18n/resources';
 import type { RootStackScreenProps } from '@/navigation/navigation-types';
 
 type Props = RootStackScreenProps<AppRoute.Welcome>;
@@ -14,9 +17,13 @@ const FONT_SCALE_OPTIONS: ThemeFontScalePreference[] = [
   'large',
   'system',
 ];
+const LANGUAGE_OPTIONS: AppLanguage[] = ['en', 'hi'];
 
 export function WelcomeScreen({ navigation }: Props) {
+  const { t } = useTranslation();
   const theme = useThemeValue();
+  const language = useLanguageStore(languageStoreSelectors.language);
+  const setLanguage = useLanguageStore(languageStoreSelectors.setLanguage);
   const {
     preference,
     fontScalePreference,
@@ -29,30 +36,17 @@ export function WelcomeScreen({ navigation }: Props) {
     <Screen scroll>
       <View style={styles.page}>
         <View style={styles.hero}>
-          <Text style={styles.kicker}>
-            Hyfenative - React Native Boilerplate
-          </Text>
-          <Text style={styles.title}>
-            Build Faster With A Clean React Native Stack
-          </Text>
-          <Text style={styles.subtitle}>
-            Ky-powered API contracts, schema validation, persistent query cache,
-            and MMKV-ready auth flows.
-          </Text>
+          <Text style={styles.kicker}>{t('welcome.kicker')}</Text>
+          <Text style={styles.title}>{t('welcome.title')}</Text>
+          <Text style={styles.subtitle}>{t('welcome.subtitle')}</Text>
         </View>
         <View style={styles.card}>
-          <Text style={styles.cardTitle}>What is wired</Text>
-          <Text style={styles.point}>
-            1. Typed API helpers with Zod schema checks
-          </Text>
-          <Text style={styles.point}>
-            2. Request/response key case transformation
-          </Text>
-          <Text style={styles.point}>
-            3. Normalized API errors + auth token persistence
-          </Text>
+          <Text style={styles.cardTitle}>{t('welcome.cardTitle')}</Text>
+          <Text style={styles.point}>{t('welcome.point1')}</Text>
+          <Text style={styles.point}>{t('welcome.point2')}</Text>
+          <Text style={styles.point}>{t('welcome.point3')}</Text>
 
-          <Text style={styles.themeSectionTitle}>Theme mode</Text>
+          <Text style={styles.themeSectionTitle}>{t('welcome.themeMode')}</Text>
           <View style={styles.themeRow}>
             {THEME_OPTIONS.map(option => {
               const isSelected = option === preference;
@@ -77,7 +71,7 @@ export function WelcomeScreen({ navigation }: Props) {
               );
             })}
           </View>
-          <Text style={styles.themeSectionTitle}>Font scale</Text>
+          <Text style={styles.themeSectionTitle}>{t('welcome.fontScale')}</Text>
           <View style={styles.themeRow}>
             {FONT_SCALE_OPTIONS.map(option => {
               const isSelected = option === fontScalePreference;
@@ -102,12 +96,37 @@ export function WelcomeScreen({ navigation }: Props) {
               );
             })}
           </View>
+          <Text style={styles.themeSectionTitle}>{t('welcome.language')}</Text>
+          <View style={styles.themeRow}>
+            {LANGUAGE_OPTIONS.map(option => {
+              const isSelected = option === language;
+              return (
+                <Pressable
+                  key={option}
+                  onPress={() => setLanguage(option)}
+                  style={[
+                    styles.themeOption,
+                    isSelected && styles.themeOptionSelected,
+                  ]}
+                >
+                  <Text
+                    style={[
+                      styles.themeOptionText,
+                      isSelected && styles.themeOptionTextSelected,
+                    ]}
+                  >
+                    {option.toUpperCase()}
+                  </Text>
+                </Pressable>
+              );
+            })}
+          </View>
 
           <Text
             style={styles.link}
             onPress={() => navigation.navigate(AppRoute.Login)}
           >
-            Continue to login
+            {t('welcome.toLogin')}
           </Text>
         </View>
       </View>
