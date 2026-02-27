@@ -1,14 +1,17 @@
 import { useEffect, useState } from 'react';
 import { useColorScheme, useWindowDimensions } from 'react-native';
+import { useShallow } from 'zustand/react/shallow';
 import { themeStoreSelectors, useThemeStore } from './store';
 import type { ThemeMode } from './types';
 
 export const useSyncSystemTheme = () => {
   const systemColorScheme = useColorScheme();
   const { fontScale } = useWindowDimensions();
-  const setSystemMode = useThemeStore(themeStoreSelectors.setSystemMode);
-  const setSystemFontScale = useThemeStore(
-    themeStoreSelectors.setSystemFontScale,
+  const { setSystemMode, setSystemFontScale } = useThemeStore(
+    useShallow(state => ({
+      setSystemMode: state.setSystemMode,
+      setSystemFontScale: state.setSystemFontScale,
+    })),
   );
 
   useEffect(() => {
@@ -22,6 +25,16 @@ export const useSyncSystemTheme = () => {
 };
 
 export const useThemeValue = () => useThemeStore(themeStoreSelectors.theme);
+
+export const useThemePreferences = () =>
+  useThemeStore(
+    useShallow(state => ({
+      preference: state.preference,
+      fontScalePreference: state.fontScalePreference,
+      setPreference: state.setPreference,
+      setFontScalePreference: state.setFontScalePreference,
+    })),
+  );
 
 export const useThemeHydrated = () => {
   const [hydrated, setHydrated] = useState(useThemeStore.persist.hasHydrated());
