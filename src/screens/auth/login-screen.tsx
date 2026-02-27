@@ -7,8 +7,8 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSendOtp } from '@/api/endpoints/auth/use-auth-api';
+import { Screen } from '@/components/screen';
 import { AppRoute } from '@/navigation/routes';
 import { useTheme } from '@/theme';
 import type { Theme } from '@/theme';
@@ -67,7 +67,7 @@ export function LoginScreen({ navigation }: Props) {
   };
 
   return (
-    <SafeAreaView style={styles.safe}>
+    <Screen keyboardAware scroll>
       <View style={styles.page}>
         <View style={styles.hero}>
           <Text style={styles.kicker}>Secure Sign In</Text>
@@ -76,7 +76,6 @@ export function LoginScreen({ navigation }: Props) {
             Enter mobile number or email and we will send a one-time code.
           </Text>
         </View>
-
         <View style={styles.card}>
           <Text style={styles.label}>Identifier</Text>
           <TextInput
@@ -134,25 +133,21 @@ export function LoginScreen({ navigation }: Props) {
           </Pressable>
         </View>
       </View>
-    </SafeAreaView>
+    </Screen>
   );
 }
 
 const createStyles = (theme: Theme) =>
   StyleSheet.create({
-    safe: {
-      flex: 1,
-      backgroundColor: theme.colors.background,
-    },
     page: {
       flex: 1,
       paddingHorizontal: theme.spacing.lg,
       paddingVertical: theme.spacing.xl,
       justifyContent: 'space-between',
       backgroundColor: theme.colors.background,
+      gap: theme.spacing.lg,
     },
     hero: {
-      marginTop: theme.spacing.lg,
       gap: 10,
     },
     kicker: {
@@ -244,5 +239,8 @@ const createStyles = (theme: Theme) =>
       fontSize: 14,
       fontWeight: '600',
       marginTop: theme.spacing.xs,
+    },
+    blankSpace: {
+      flex: 1,
     },
   });

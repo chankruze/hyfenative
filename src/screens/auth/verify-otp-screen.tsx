@@ -7,8 +7,8 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { useSendOtp, useVerifyOtp } from '@/api/endpoints/auth/use-auth-api';
+import { Screen } from '@/components/screen';
 import { AppRoute } from '@/navigation/routes';
 import { useTheme } from '@/theme';
 import type { Theme } from '@/theme';
@@ -78,7 +78,7 @@ export function VerifyOtpScreen({ navigation, route }: Props) {
   };
 
   return (
-    <SafeAreaView style={styles.safe}>
+    <Screen keyboardAware scroll>
       <View style={styles.page}>
         <View style={styles.hero}>
           <Text style={styles.kicker}>Verify OTP</Text>
@@ -142,25 +142,21 @@ export function VerifyOtpScreen({ navigation, route }: Props) {
           </Pressable>
         </View>
       </View>
-    </SafeAreaView>
+    </Screen>
   );
 }
 
 const createStyles = (theme: Theme) =>
   StyleSheet.create({
-    safe: {
-      flex: 1,
-      backgroundColor: theme.colors.background,
-    },
     page: {
       flex: 1,
       paddingHorizontal: theme.spacing.lg,
       paddingVertical: theme.spacing.xl,
       justifyContent: 'space-between',
       backgroundColor: theme.colors.background,
+      gap: theme.spacing.lg,
     },
     hero: {
-      marginTop: theme.spacing.lg,
       gap: theme.spacing.xs,
     },
     kicker: {
@@ -242,5 +238,8 @@ const createStyles = (theme: Theme) =>
       fontSize: 14,
       fontWeight: '600',
       marginTop: 6,
+    },
+    blankSpace: {
+      flex: 1,
     },
   });

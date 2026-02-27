@@ -14,6 +14,7 @@ export function RootNavigator() {
       screenOptions={{
         headerShown: false,
         animation: 'slide_from_right',
+        keyboardHandlingEnabled: false,
       }}
     >
       <Stack.Screen name={AppRoute.Welcome} component={WelcomeScreen} />

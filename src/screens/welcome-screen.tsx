@@ -1,6 +1,6 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { AppRoute } from '@/navigation/routes';
+import { Screen } from '@/components/screen';
 import { useTheme } from '@/theme';
 import type { Theme, ThemePreference } from '@/theme';
 import type { RootStackScreenProps } from '@/navigation/navigation-types';
@@ -14,10 +14,12 @@ export function WelcomeScreen({ navigation }: Props) {
   const styles = createStyles(theme);
 
   return (
-    <SafeAreaView style={styles.safe}>
+    <Screen>
       <View style={styles.page}>
         <View style={styles.hero}>
-          <Text style={styles.kicker}>Hyfenative - React Native Boilerplate</Text>
+          <Text style={styles.kicker}>
+            Hyfenative - React Native Boilerplate
+          </Text>
           <Text style={styles.title}>
             Build Faster With A Clean React Native Stack
           </Text>
@@ -26,7 +28,6 @@ export function WelcomeScreen({ navigation }: Props) {
             and MMKV-ready auth flows.
           </Text>
         </View>
-
         <View style={styles.card}>
           <Text style={styles.cardTitle}>What is wired</Text>
           <Text style={styles.point}>
@@ -73,25 +74,21 @@ export function WelcomeScreen({ navigation }: Props) {
           </Text>
         </View>
       </View>
-    </SafeAreaView>
+    </Screen>
   );
 }
 
 const createStyles = (theme: Theme) =>
   StyleSheet.create({
-    safe: {
-      flex: 1,
-      backgroundColor: theme.colors.background,
-    },
     page: {
       flex: 1,
       paddingHorizontal: theme.spacing.lg,
       paddingVertical: theme.spacing.xl,
       justifyContent: 'space-between',
       backgroundColor: theme.colors.background,
+      gap: theme.spacing.lg,
     },
     hero: {
-      marginTop: theme.spacing.lg,
       gap: theme.spacing.sm,
     },
     kicker: {
@@ -160,5 +157,8 @@ const createStyles = (theme: Theme) =>
       marginTop: theme.spacing.sm,
       fontSize: 14,
       fontWeight: '600',
+    },
+    blankSpace: {
+      flex: 1,
     },
   });
