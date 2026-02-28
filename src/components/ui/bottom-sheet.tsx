@@ -1,9 +1,10 @@
-import { useEffect, useMemo, useRef } from 'react';
-import type { ComponentType, ReactNode } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
+import type { ReactNode } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import type { StyleProp, ViewStyle } from 'react-native';
+import { BottomSheetBackdrop, BottomSheetModal, type BottomSheetBackdropProps } from '@gorhom/bottom-sheet';
+import { BottomSheetView } from '@gorhom/bottom-sheet';
 import { useThemeValue } from '@/theme';
-import { AppModal } from './modal';
 
 type SnapPoint = number | string;
 
@@ -18,18 +19,15 @@ type BottomSheetProps = {
   contentStyle?: StyleProp<ViewStyle>;
 };
 
-type GorhomModule = {
-  BottomSheetModalProvider: ComponentType<{ children?: ReactNode }>;
-  BottomSheetModal: ComponentType<Record<string, unknown>>;
-};
-
-const loadGorhomModule = (): GorhomModule | null => {
-  try {
-    return require('@gorhom/bottom-sheet') as GorhomModule;
-  } catch {
-    return null;
-  }
-};
+const renderBackdrop = (props: BottomSheetBackdropProps) => (
+  <BottomSheetBackdrop
+    {...props}
+    appearsOnIndex={0}
+    disappearsOnIndex={-1}
+    pressBehavior="close"
+    opacity={0.45}
+  />
+);
 
 export const BottomSheet = ({
   visible,
@@ -42,65 +40,32 @@ export const BottomSheet = ({
   contentStyle,
 }: BottomSheetProps) => {
   const theme = useThemeValue();
-  const gorhom = useMemo(loadGorhomModule, []);
-  const sheetRef = useRef<{ present: () => void; dismiss: () => void } | null>(null);
+  const sheetRef = useRef<BottomSheetModal>(null);
+  const hasPresentedRef = useRef(false);
+
+  const present = useCallback(() => {
+    requestAnimationFrame(() => {
+      sheetRef.current?.present();
+      hasPresentedRef.current = true;
+    });
+  }, []);
+
+  const dismiss = useCallback(() => {
+    sheetRef.current?.dismiss();
+    hasPresentedRef.current = false;
+  }, []);
 
   useEffect(() => {
-    if (!gorhom || !sheetRef.current) {
-      return;
-    }
-
     if (visible) {
-      sheetRef.current.present();
+      present();
       return;
     }
 
-    sheetRef.current.dismiss();
-  }, [gorhom, visible]);
+    if (hasPresentedRef.current) {
+      dismiss();
+    }
+  }, [dismiss, present, visible]);
 
-  if (!gorhom) {
-    const fallbackModalContentStyle: ViewStyle = {
-      justifyContent: 'flex-end',
-      paddingHorizontal: 0,
-      paddingBottom: 0,
-    };
-    const fallbackSheetStyle: ViewStyle = {
-      borderColor: theme.colors.border,
-      backgroundColor: theme.colors.surface,
-      borderTopLeftRadius: theme.radius.lg,
-      borderTopRightRadius: theme.radius.lg,
-      padding: theme.spacing.md,
-      gap: theme.spacing.sm,
-    };
-    const handleStyle: ViewStyle = {
-      backgroundColor: theme.colors.borderStrong,
-    };
-
-    return (
-      <AppModal
-        visible={visible}
-        onClose={onClose}
-        title={title}
-        footer={footer}
-        size="full"
-        style={style}
-        contentStyle={[fallbackModalContentStyle, contentStyle]}
-      >
-        <View style={[styles.fallbackSheet, fallbackSheetStyle]}>
-          <View style={[styles.handle, handleStyle]} />
-          {title ? (
-            <Text style={[theme.typography.label, { color: theme.colors.text }]}>
-              {title}
-            </Text>
-          ) : null}
-          <View>{children}</View>
-          {footer}
-        </View>
-      </AppModal>
-    );
-  }
-
-  const { BottomSheetModalProvider, BottomSheetModal } = gorhom;
   const backgroundStyle: ViewStyle = {
     backgroundColor: theme.colors.surface,
     borderColor: theme.colors.border,
@@ -115,46 +80,31 @@ export const BottomSheet = ({
   };
 
   return (
-    <BottomSheetModalProvider>
-      <BottomSheetModal
-        ref={sheetRef}
-        index={0}
-        snapPoints={snapPoints}
-        onChange={(index: number) => {
-          if (index === -1) {
-            onClose();
-          }
-        }}
-        onDismiss={onClose}
-        backgroundStyle={backgroundStyle}
-        handleIndicatorStyle={handleIndicatorStyle}
-        style={style}
-      >
-        <View style={[styles.sheetContent, sheetContentStyle, contentStyle]}>
-          {title ? (
-            <Text style={[theme.typography.label, { color: theme.colors.text }]}>
-              {title}
-            </Text>
-          ) : null}
-          <View>{children}</View>
-          {footer}
-        </View>
-      </BottomSheetModal>
-    </BottomSheetModalProvider>
+    <BottomSheetModal
+      ref={sheetRef}
+      index={0}
+      snapPoints={snapPoints}
+      enablePanDownToClose
+      onDismiss={onClose}
+      backgroundStyle={backgroundStyle}
+      handleIndicatorStyle={handleIndicatorStyle}
+      backdropComponent={renderBackdrop}
+      style={style}
+    >
+      <BottomSheetView style={[styles.sheetContent, sheetContentStyle, contentStyle]}>
+        {title ? (
+          <Text style={[theme.typography.label, { color: theme.colors.text }]}>
+            {title}
+          </Text>
+        ) : null}
+        <View>{children}</View>
+        {footer}
+      </BottomSheetView>
+    </BottomSheetModal>
   );
 };
 
 const styles = StyleSheet.create({
-  fallbackSheet: {
-    width: '100%',
-    borderTopWidth: 1,
-  },
-  handle: {
-    width: 44,
-    height: 5,
-    alignSelf: 'center',
-    borderRadius: 999,
-  },
   sheetContent: {
     flex: 1,
   },

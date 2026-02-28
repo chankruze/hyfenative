@@ -159,6 +159,12 @@ export function WelcomeScreen({ navigation }: Props) {
           >
             {t('welcome.toLogin')}
           </Text>
+          <Text
+            style={styles.link}
+            onPress={() => navigation.navigate(AppRoute.UiDemo)}
+          >
+            Open UI Demo
+          </Text>
         </View>
       </View>
     </Screen>

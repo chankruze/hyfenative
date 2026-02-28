@@ -4,7 +4,10 @@ import {
   DefaultTheme,
 } from '@react-navigation/native';
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import { StyleSheet } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { RootNavigator } from '@/navigation/root-navigator';
 import { queryClient, persister } from '@/lib/query-client';
 import { AppErrorBoundary } from '@/providers/error-boundary';
@@ -45,11 +48,21 @@ export const App = () => {
     >
       <AppErrorBoundary>
         <SafeAreaProvider>
-          <NavigationContainer theme={navigationTheme}>
-            <RootNavigator />
-          </NavigationContainer>
+          <GestureHandlerRootView style={styles.fill}>
+            <BottomSheetModalProvider>
+              <NavigationContainer theme={navigationTheme}>
+                <RootNavigator />
+              </NavigationContainer>
+            </BottomSheetModalProvider>
+          </GestureHandlerRootView>
         </SafeAreaProvider>
       </AppErrorBoundary>
     </PersistQueryClientProvider>
   );
 };
+
+const styles = StyleSheet.create({
+  fill: {
+    flex: 1,
+  },
+});

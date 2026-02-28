@@ -20,7 +20,6 @@ export { IconByVariant } from './icon-by-variant';
 export { Input } from './input';
 export { Label } from './label';
 export { AppModal } from './modal';
-export { Popover } from './popover';
 export { Radio } from './radio';
 export { Select } from './select';
 export { Skeleton } from './skeleton';
@@ -31,6 +30,14 @@ export { Switch } from './switch';
 export { TabBar } from './tab-bar';
 export { Tag } from './tag';
 export { TextArea } from './text-area';
-export { Tooltip } from './tooltip';
 export type { ComponentSize, ComponentVariant } from './shared';
 export type { SelectOption } from './select';
+export {
+  UIDataDisplay,
+  UIEssentials,
+  UIFeedback,
+  UIForms,
+  UILayout,
+  UINavigation,
+  UIOverlay,
+} from './groups';
