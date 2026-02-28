@@ -3,7 +3,7 @@ import path from 'path';
 import { execFileSync } from 'child_process';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
-import type { HyfenativeConfig } from '../hyfenative.config';
+import configModule, { HyfenativeConfig } from '../hyfenative.config';
 
 type CliArgs = {
   name: string;
@@ -36,21 +36,9 @@ function ensureValidPackage(id: string) {
 }
 
 function renderConfig(config: HyfenativeConfig): string {
-  return `export type HyfenativeConfig = {
-  app: { name: string; slug: string; scheme: string };
-  android: { package: string };
-  ios: { bundleId: string };
-};
+  return `import type { HyfenativeConfig } from './hyfenative.config.types';
 
-const config: HyfenativeConfig = {
-  app: {
-    name: '${config.app.name}',
-    slug: '${config.app.slug}',
-    scheme: '${config.app.scheme}',
-  },
-  android: { package: '${config.android.package}' },
-  ios: { bundleId: '${config.ios.bundleId}' },
-};
+const config: HyfenativeConfig = ${JSON.stringify(config, null, 2)};
 
 export default config;
 `;
@@ -101,7 +89,7 @@ async function createBackup(root: string) {
   const backupDir = path.join(root, '.hyfenative-backup');
   await fs.remove(backupDir);
   await fs.copy(root, backupDir, {
-    filter: (src: string | string[]) => !src.includes('node_modules'),
+    filter: (src: string) => !src.includes('node_modules'),
   });
 }
 
@@ -140,13 +128,17 @@ async function main() {
   const root = process.cwd();
   const configPath = path.join(root, 'hyfenative.config.ts');
 
+  const existing: HyfenativeConfig = configModule;
+
   const dryRun = argv.dryRun ?? false;
 
   if (!dryRun) await createBackup(root);
 
   try {
     const next: HyfenativeConfig = {
+      ...existing,
       app: {
+        ...existing.app,
         name: argv.name,
         slug: slugify(argv.name),
         scheme: slugify(argv.name),
@@ -160,14 +152,17 @@ async function main() {
 
     const buildGradlePath = path.join(root, 'android/app/build.gradle');
     let buildGradle = await fs.readFile(buildGradlePath, 'utf8');
+
     buildGradle = buildGradle.replace(
       /^\s*namespace\s+["'][^"']+["']/m,
       `namespace "${argv.id}"`,
     );
+
     buildGradle = buildGradle.replace(
       /^\s*applicationId\s+["'][^"']+["']/m,
       `applicationId "${argv.id}"`,
     );
+
     await safeWrite(buildGradlePath, buildGradle, dryRun);
     console.log('✔ Updated namespace + applicationId');
 
@@ -175,16 +170,18 @@ async function main() {
       root,
       'android/app/src/main/AndroidManifest.xml',
     );
+
     let manifest = await fs.readFile(manifestPath, 'utf8');
+
     manifest = manifest.replace(
       /<manifest([^>]*?)\spackage="[^"]*"/,
       `<manifest$1 package="${argv.id}"`,
     );
+
     await safeWrite(manifestPath, manifest, dryRun);
     console.log('✔ Updated AndroidManifest.xml');
 
     if (!dryRun) await validateRename(root, argv.id);
-
     console.log('✔ Validation passed');
 
     if (argv.commit && !dryRun) {
