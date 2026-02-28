@@ -1,15 +1,8 @@
 import { useMemo, useState } from 'react';
-import {
-  ActivityIndicator,
-  Pressable,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useSendOtp } from '@/api/endpoints/auth/use-auth-api';
-import { Screen } from '@/components/screen';
+import { FormField, IconByVariant, Input, Screen, Spinner } from '@/components';
 import { AppRoute } from '@/navigation/routes';
 import { useThemeValue } from '@/theme';
 import type { Theme } from '@/theme';
@@ -41,6 +34,7 @@ export function LoginScreen({ navigation }: Props) {
   );
 
   const mutationError = sendOtpMutation.error?.message;
+  const inputError = localError ?? mutationError ?? undefined;
 
   const onContinue = async () => {
     const normalized = normalizeIdentifier(identifier);
@@ -77,18 +71,22 @@ export function LoginScreen({ navigation }: Props) {
           <Text style={styles.subtitle}>{t('auth.loginSubtitle')}</Text>
         </View>
         <View style={styles.card}>
-          <Text style={styles.label}>{t('auth.identifierLabel')}</Text>
-          <TextInput
-            value={identifier}
-            onChangeText={setIdentifier}
-            placeholder={t('auth.identifierPlaceholder')}
-            placeholderTextColor={theme.colors.inputPlaceholder}
-            style={styles.input}
-            autoCapitalize="none"
-            keyboardType="email-address"
-          />
+          <FormField
+            label={t('auth.identifierLabel')}
+            error={inputError}
+            variant="secondary"
+          >
+            <Input
+              value={identifier}
+              onChangeText={setIdentifier}
+              placeholder={t('auth.identifierPlaceholder')}
+              autoCapitalize="none"
+              keyboardType="email-address"
+              invalid={Boolean(inputError)}
+            />
+          </FormField>
 
-          <Text style={styles.label}>{t('auth.sendOtpVia')}</Text>
+          <Text style={styles.fieldLabel}>{t('auth.sendOtpVia')}</Text>
           <View style={styles.viaRow}>
             {OTP_VIA_OPTIONS.map(option => {
               const isActive = option === via;
@@ -98,20 +96,22 @@ export function LoginScreen({ navigation }: Props) {
                   onPress={() => setVia(option)}
                   style={[styles.viaButton, isActive && styles.viaButtonActive]}
                 >
-                  <Text
-                    style={[styles.viaText, isActive && styles.viaTextActive]}
-                  >
-                    {option.toUpperCase()}
-                  </Text>
+                  <View style={styles.viaButtonContent}>
+                    <IconByVariant
+                      name={isActive ? 'radiobox-marked' : 'radiobox-blank'}
+                      variant={isActive ? 'primary' : 'secondary'}
+                      size="sm"
+                    />
+                    <Text
+                      style={[styles.viaText, isActive && styles.viaTextActive]}
+                    >
+                      {option.toUpperCase()}
+                    </Text>
+                  </View>
                 </Pressable>
               );
             })}
           </View>
-
-          {localError ? <Text style={styles.error}>{localError}</Text> : null}
-          {mutationError ? (
-            <Text style={styles.error}>{mutationError}</Text>
-          ) : null}
 
           <Pressable
             onPress={onContinue}
@@ -122,14 +122,18 @@ export function LoginScreen({ navigation }: Props) {
             ]}
           >
             {sendOtpMutation.isPending ? (
-              <ActivityIndicator color={theme.colors.textInverse} />
+              <Spinner variant="secondary" size="sm" />
             ) : (
-              <Text style={styles.primaryButtonText}>{t('common.continue')}</Text>
+              <Text style={styles.primaryButtonText}>
+                {t('common.continue')}
+              </Text>
             )}
           </Pressable>
 
           <Pressable onPress={() => navigation.navigate(AppRoute.Welcome)}>
-            <Text style={styles.secondaryAction}>{t('auth.backToWelcome')}</Text>
+            <Text style={styles.secondaryAction}>
+              {t('auth.backToWelcome')}
+            </Text>
           </Pressable>
         </View>
       </View>
@@ -170,20 +174,10 @@ const createStyles = (theme: Theme) =>
       padding: theme.spacing.md,
       gap: theme.spacing.xs,
     },
-    label: {
+    fieldLabel: {
       color: theme.colors.textMuted,
       ...theme.typography.label,
       marginTop: theme.spacing.xs / 4,
-    },
-    input: {
-      height: 48,
-      borderRadius: theme.radius.md,
-      borderWidth: 1,
-      borderColor: theme.colors.borderStrong,
-      backgroundColor: theme.colors.inputBackground,
-      color: theme.colors.text,
-      paddingHorizontal: theme.spacing.sm,
-      fontSize: theme.typography.body.fontSize,
     },
     viaRow: {
       flexDirection: 'row',
@@ -198,6 +192,11 @@ const createStyles = (theme: Theme) =>
       alignItems: 'center',
       backgroundColor: theme.colors.surfaceAlt,
     },
+    viaButtonContent: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: theme.spacing.xs / 2,
+    },
     viaButtonActive: {
       borderColor: theme.colors.primary,
       backgroundColor: theme.colors.primaryMuted,
@@ -209,11 +208,6 @@ const createStyles = (theme: Theme) =>
     },
     viaTextActive: {
       color: theme.colors.accent,
-    },
-    error: {
-      color: theme.colors.error,
-      fontSize: theme.typography.label.fontSize,
-      lineHeight: theme.typography.label.lineHeight,
     },
     primaryButton: {
       height: 48,

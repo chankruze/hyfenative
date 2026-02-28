@@ -1,10 +1,13 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { AppRoute } from '@/navigation/routes';
-import { Screen } from '@/components/screen';
+import { Avatar, IconByVariant, Screen } from '@/components';
 import { useThemePreferences, useThemeValue } from '@/theme';
 import type { Theme, ThemeFontScalePreference, ThemePreference } from '@/theme';
-import { languageStoreSelectors, useLanguageStore } from '@/stores/use-language-store';
+import {
+  languageStoreSelectors,
+  useLanguageStore,
+} from '@/stores/use-language-store';
 import type { AppLanguage } from '@/i18n/resources';
 import type { RootStackScreenProps } from '@/navigation/navigation-types';
 
@@ -36,6 +39,13 @@ export function WelcomeScreen({ navigation }: Props) {
     <Screen scroll>
       <View style={styles.page}>
         <View style={styles.hero}>
+          <Avatar
+            name="Hyfe Native"
+            fallback="HN"
+            variant="primary"
+            size="lg"
+            style={styles.heroAvatar}
+          />
           <Text style={styles.kicker}>{t('welcome.kicker')}</Text>
           <Text style={styles.title}>{t('welcome.title')}</Text>
           <Text style={styles.subtitle}>{t('welcome.subtitle')}</Text>
@@ -59,14 +69,21 @@ export function WelcomeScreen({ navigation }: Props) {
                     isSelected && styles.themeOptionSelected,
                   ]}
                 >
-                  <Text
-                    style={[
-                      styles.themeOptionText,
-                      isSelected && styles.themeOptionTextSelected,
-                    ]}
-                  >
-                    {option.toUpperCase()}
-                  </Text>
+                  <View style={styles.themeOptionContent}>
+                    <IconByVariant
+                      name={isSelected ? 'check-circle' : 'radiobox-blank'}
+                      size="sm"
+                      variant={isSelected ? 'primary' : 'secondary'}
+                    />
+                    <Text
+                      style={[
+                        styles.themeOptionText,
+                        isSelected && styles.themeOptionTextSelected,
+                      ]}
+                    >
+                      {option.toUpperCase()}
+                    </Text>
+                  </View>
                 </Pressable>
               );
             })}
@@ -84,14 +101,21 @@ export function WelcomeScreen({ navigation }: Props) {
                     isSelected && styles.themeOptionSelected,
                   ]}
                 >
-                  <Text
-                    style={[
-                      styles.themeOptionText,
-                      isSelected && styles.themeOptionTextSelected,
-                    ]}
-                  >
-                    {option.toUpperCase()}
-                  </Text>
+                  <View style={styles.themeOptionContent}>
+                    <IconByVariant
+                      name={isSelected ? 'check-circle' : 'radiobox-blank'}
+                      size="sm"
+                      variant={isSelected ? 'primary' : 'secondary'}
+                    />
+                    <Text
+                      style={[
+                        styles.themeOptionText,
+                        isSelected && styles.themeOptionTextSelected,
+                      ]}
+                    >
+                      {option.toUpperCase()}
+                    </Text>
+                  </View>
                 </Pressable>
               );
             })}
@@ -109,14 +133,21 @@ export function WelcomeScreen({ navigation }: Props) {
                     isSelected && styles.themeOptionSelected,
                   ]}
                 >
-                  <Text
-                    style={[
-                      styles.themeOptionText,
-                      isSelected && styles.themeOptionTextSelected,
-                    ]}
-                  >
-                    {option.toUpperCase()}
-                  </Text>
+                  <View style={styles.themeOptionContent}>
+                    <IconByVariant
+                      name={isSelected ? 'check-circle' : 'radiobox-blank'}
+                      size="sm"
+                      variant={isSelected ? 'primary' : 'secondary'}
+                    />
+                    <Text
+                      style={[
+                        styles.themeOptionText,
+                        isSelected && styles.themeOptionTextSelected,
+                      ]}
+                    >
+                      {option.toUpperCase()}
+                    </Text>
+                  </View>
                 </Pressable>
               );
             })}
@@ -146,6 +177,9 @@ const createStyles = (theme: Theme) =>
     },
     hero: {
       gap: theme.spacing.sm,
+    },
+    heroAvatar: {
+      marginBottom: theme.spacing.xs / 2,
     },
     kicker: {
       color: theme.colors.primary,
@@ -195,6 +229,11 @@ const createStyles = (theme: Theme) =>
       paddingVertical: theme.spacing.xs,
       alignItems: 'center',
       backgroundColor: theme.colors.surfaceAlt,
+    },
+    themeOptionContent: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: theme.spacing.xs / 2,
     },
     themeOptionSelected: {
       borderColor: theme.colors.primary,

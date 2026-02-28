@@ -1,15 +1,8 @@
 import { useMemo, useState } from 'react';
-import {
-  ActivityIndicator,
-  Pressable,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useSendOtp, useVerifyOtp } from '@/api/endpoints/auth/use-auth-api';
-import { Screen } from '@/components/screen';
+import { FormField, Input, Screen, Spinner } from '@/components';
 import { AppRoute } from '@/navigation/routes';
 import { useThemeValue } from '@/theme';
 import type { Theme } from '@/theme';
@@ -31,6 +24,11 @@ export function VerifyOtpScreen({ navigation, route }: Props) {
 
   const verifyOtpMutation = useVerifyOtp();
   const resendOtpMutation = useSendOtp();
+  const errorMessage =
+    localError ??
+    verifyOtpMutation.error?.message ??
+    resendOtpMutation.error?.message ??
+    undefined;
 
   const canVerify = useMemo(
     () => code.trim().length > 0 && !verifyOtpMutation.isPending,
@@ -94,24 +92,22 @@ export function VerifyOtpScreen({ navigation, route }: Props) {
         </View>
 
         <View style={styles.card}>
-          <Text style={styles.label}>{t('auth.otpLabel')}</Text>
-          <TextInput
-            value={code}
-            onChangeText={setCode}
-            placeholder={t('auth.otpPlaceholder')}
-            placeholderTextColor={theme.colors.inputPlaceholder}
-            style={styles.input}
-            keyboardType="number-pad"
-            maxLength={6}
-          />
+          <FormField
+            label={t('auth.otpLabel')}
+            error={errorMessage}
+            variant="secondary"
+          >
+            <Input
+              value={code}
+              onChangeText={setCode}
+              placeholder={t('auth.otpPlaceholder')}
+              keyboardType="number-pad"
+              maxLength={6}
+              invalid={Boolean(errorMessage)}
+              inputStyle={styles.codeInputText}
+            />
+          </FormField>
 
-          {localError ? <Text style={styles.error}>{localError}</Text> : null}
-          {verifyOtpMutation.error?.message ? (
-            <Text style={styles.error}>{verifyOtpMutation.error.message}</Text>
-          ) : null}
-          {resendOtpMutation.error?.message ? (
-            <Text style={styles.error}>{resendOtpMutation.error.message}</Text>
-          ) : null}
           {successMessage ? (
             <Text style={styles.success}>{successMessage}</Text>
           ) : null}
@@ -125,9 +121,11 @@ export function VerifyOtpScreen({ navigation, route }: Props) {
             ]}
           >
             {verifyOtpMutation.isPending ? (
-              <ActivityIndicator color={theme.colors.textInverse} />
+              <Spinner variant="secondary" size="sm" />
             ) : (
-              <Text style={styles.primaryButtonText}>{t('auth.verifyOtp')}</Text>
+              <Text style={styles.primaryButtonText}>
+                {t('auth.verifyOtp')}
+              </Text>
             )}
           </Pressable>
 
@@ -137,14 +135,16 @@ export function VerifyOtpScreen({ navigation, route }: Props) {
             style={styles.ghostButton}
           >
             {resendOtpMutation.isPending ? (
-              <ActivityIndicator color={theme.colors.primary} />
+              <Spinner variant="primary" size="sm" />
             ) : (
               <Text style={styles.ghostButtonText}>{t('auth.resendOtp')}</Text>
             )}
           </Pressable>
 
           <Pressable onPress={() => navigation.navigate(AppRoute.Login)}>
-            <Text style={styles.secondaryAction}>{t('auth.changeIdentifier')}</Text>
+            <Text style={styles.secondaryAction}>
+              {t('auth.changeIdentifier')}
+            </Text>
           </Pressable>
         </View>
       </View>
@@ -185,25 +185,9 @@ const createStyles = (theme: Theme) =>
       padding: theme.spacing.md,
       gap: theme.spacing.xs,
     },
-    label: {
-      color: theme.colors.textMuted,
-      ...theme.typography.label,
-    },
-    input: {
-      height: 48,
-      borderRadius: theme.radius.md,
-      borderWidth: 1,
-      borderColor: theme.colors.borderStrong,
-      backgroundColor: theme.colors.inputBackground,
-      color: theme.colors.text,
-      paddingHorizontal: theme.spacing.sm,
+    codeInputText: {
       fontSize: theme.typography.body.fontSize + theme.spacing.xs / 4,
-      letterSpacing: theme.typography.kicker.letterSpacing * 5,
-    },
-    error: {
-      color: theme.colors.error,
-      fontSize: theme.typography.label.fontSize,
-      lineHeight: theme.typography.label.lineHeight,
+      letterSpacing: (theme.typography.kicker.letterSpacing ?? 0) * 5,
     },
     success: {
       color: theme.colors.success,
