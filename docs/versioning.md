@@ -10,9 +10,9 @@ The version script (`scripts/bump-version.ts`) treats these files as version tar
   - `app.versionCode`
 - `package.json`
   - `version`
-- `android/gradle.properties`
-  - `VERSION_NAME`
-  - `VERSION_CODE`
+- `android/app/build.gradle`
+  - `defaultConfig.versionCode`
+  - `defaultConfig.versionName`
 
 ## Bump Commands
 
@@ -41,33 +41,14 @@ Supported flags:
 4. `git push`
 5. `git push origin v<version>`
 
-## Current Android Mismatch (Important)
+## Android Update Strategy
 
-Current repository state:
+The script now edits `android/app/build.gradle` directly by replacing:
 
-- `android/app/build.gradle` hardcodes:
-  - `versionCode 1`
-  - `versionName "1.0"`
-- `android/gradle.properties` currently does not define `VERSION_NAME` / `VERSION_CODE`.
+- `versionCode <number>`
+- `versionName "<semver>"`
 
-Impact:
-
-- Running `npm run bump` updates files, but Android build version in `build.gradle` will not automatically reflect those updated values.
-
-## Safe Fix Path
-
-Choose one source of truth and align tooling.
-
-Option A (recommended): use `gradle.properties`
-
-1. Add `VERSION_NAME=<version>` and `VERSION_CODE=<int>` to `android/gradle.properties`.
-2. In `android/app/build.gradle`, replace hardcoded values with project properties.
-3. Keep `bump-version.ts` as-is.
-
-Option B: keep hardcoded `build.gradle`
-
-1. Update `bump-version.ts` to edit `android/app/build.gradle` directly.
-2. Stop writing version keys in `gradle.properties`.
+If these entries cannot be found, the script throws an error and stops.
 
 ## Team Workflow Recommendation
 

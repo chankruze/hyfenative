@@ -25,7 +25,7 @@
   - Generates Android launcher icons and iOS AppIcon set from `hyfenative.config.ts` `assets.icon`.
 
 - `npm run bump -- --patch|--minor|--major [--preid=beta] [--release] [--dry-run]`
-  - Bumps semantic version and platform counters (with caveat in `docs/versioning.md`).
+  - Bumps semantic version and platform counters, including Android `versionCode`/`versionName` in `android/app/build.gradle`.
 
 ## Quality / Test
 

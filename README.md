@@ -90,7 +90,7 @@ Release mode (commit + tag + push):
 npm run bump -- --release
 ```
 
-Versioning details and caveats: [docs/versioning.md](./docs/versioning.md).
+Versioning details: [docs/versioning.md](./docs/versioning.md).
 
 ## Extension Rules (Short)
 

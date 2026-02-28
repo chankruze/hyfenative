@@ -94,7 +94,7 @@ async function main() {
   const root = process.cwd();
   const configPath = path.join(root, 'hyfenative.config.ts');
   const packageJsonPath = path.join(root, 'package.json');
-  const gradlePropsPath = path.join(root, 'android/gradle.properties');
+  const androidBuildGradlePath = path.join(root, 'android/app/build.gradle');
 
   let configContent = await fs.readFile(configPath, 'utf8');
 
@@ -135,19 +135,24 @@ async function main() {
   if (!dryRun) await fs.writeJson(packageJsonPath, packageJson, { spaces: 2 });
 
   /* Android */
-  let gradleContent = await fs.readFile(gradlePropsPath, 'utf8');
+  let androidBuildGradle = await fs.readFile(androidBuildGradlePath, 'utf8');
 
-  gradleContent = gradleContent.replace(
-    /VERSION_NAME=.*/g,
-    `VERSION_NAME=${newVersion}`,
-  );
+  const nextBuildGradle = androidBuildGradle
+    .replace(/^\s*versionCode\s+\d+/m, `        versionCode ${newCode}`)
+    .replace(
+      /^\s*versionName\s+["'][^"']+["']/m,
+      `        versionName "${newVersion}"`,
+    );
 
-  gradleContent = gradleContent.replace(
-    /VERSION_CODE=.*/g,
-    `VERSION_CODE=${newCode}`,
-  );
+  if (nextBuildGradle === androidBuildGradle) {
+    throw new Error(
+      'Could not locate Android versionCode/versionName in android/app/build.gradle',
+    );
+  }
 
-  if (!dryRun) await fs.writeFile(gradlePropsPath, gradleContent);
+  androidBuildGradle = nextBuildGradle;
+
+  if (!dryRun) await fs.writeFile(androidBuildGradlePath, androidBuildGradle);
 
   console.log(`✔ Version bumped: ${oldVersion} → ${newVersion}`);
 
