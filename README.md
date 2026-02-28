@@ -1,117 +1,103 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# Hyfenative Boilerplate
 
-# Getting Started
+React Native 0.84 TypeScript boilerplate focused on predictable app setup for multi-environment builds, typed API access, persisted state, runtime theming, and OTP auth flow scaffolding.
 
-## Renaming the project
+## What This Boilerplate Provides
 
-### Normal
+- Environment-aware app runs (`dev`, `staging`, `prod`) via `react-native-config` and `ENVFILE` mapping.
+- Central app metadata in `hyfenative.config.ts` (name/slug/scheme/package IDs/version/icon source).
+- Scripted app configuration (`scripts/configure-app.ts`) for renaming + Android package updates.
+- Scripted icon generation (`scripts/generate-icons.ts`) for Android/iOS assets from one source PNG.
+- Typed API layer with:
+  - `ky` HTTP client
+  - automatic camelCase/snake_case key transforms
+  - Zod request/response validation
+  - normalized API error type (`ApiError`)
+- React Query + persistent cache backed by MMKV.
+- Zustand stores (auth, language, theme) with persistence and centralized reset support.
+- Theme system with tokenized palettes, brand variants (`default`, `ocean`), light/dark modes, font scaling, and cached typography generation.
+- i18n with `i18next` and runtime language sync (`en`, `hi`).
+- Global error boundary and pluggable reporter hook for production observability.
 
-```sh
-npm run configure -- --name="ClientApp" --id="com.client.app"
-```
+## Documentation Map
 
-### Dry Run
+- [Architecture](./docs/architecture.md)
+- [Folder Structure](./docs/folder-structure.md)
+- [Scripts](./docs/scripts.md)
+- [Configuration](./docs/configuration.md)
+- [Theming](./docs/theming.md)
+- [Design System](./docs/design-system.md)
+- [Versioning](./docs/versioning.md)
+- [FCM](./docs/fcm.md)
 
-```sh
-npm run configure -- --name="ClientApp" --id="com.client.app" --dry-run
-```
+## Quick Start
 
-### With Git Commit
+### 1. Install dependencies
 
-```sh
-npm run configure -- --name="ClientApp" --id="com.client.app" --commit
-```
-
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
-
-## Step 1: Start Metro
-
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
-
-To start the Metro dev server, run the following command from the root of your React Native project:
-
-```sh
-# Using npm
-npm start
-
-# OR using Yarn
-yarn start
-```
-
-## Step 2: Build and run your app
-
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
-
-### Android
-
-```sh
-# Using npm
-npm run android
-
-# OR using Yarn
-yarn android
-```
-
-### iOS
-
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
-
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
-
-```sh
+```bash
+npm install
 bundle install
+(cd ios && bundle exec pod install)
 ```
 
-Then, and every time you update your native dependencies, run:
+### 2. Configure environment files
 
-```sh
-bundle exec pod install
+Use the provided `.env.dev`, `.env.staging`, `.env.prod` patterns. See [Configuration](./docs/configuration.md).
+
+### 3. Start Metro
+
+```bash
+npm run start
 ```
 
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
+### 4. Run app per target environment
 
-```sh
-# Using npm
-npm run ios
+```bash
+npm run android:dev
+npm run android:staging
+npm run android:prod
 
-# OR using Yarn
-yarn ios
+npm run ios:dev
+npm run ios:staging
+npm run ios:prod
 ```
 
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
+## Core Workflows
 
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
+### Rename/retarget app identifiers
 
-## Step 3: Modify your app
+```bash
+npm run configure -- --name="Client App" --id="com.client.app"
+```
 
-Now that you have successfully run the app, let's make changes!
+### Regenerate launcher icons from `hyfenative.config.ts`
 
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
+```bash
+npm run icons
+```
 
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
+### Bump versions
 
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
+```bash
+npm run bump -- --patch
+npm run bump -- --minor
+npm run bump -- --major
+```
 
-## Congratulations! :tada:
+Release mode (commit + tag + push):
 
-You've successfully run and modified your React Native App. :partying_face:
+```bash
+npm run bump -- --release
+```
 
-### Now what?
+Versioning details and caveats: [docs/versioning.md](./docs/versioning.md).
 
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
+## Extension Rules (Short)
 
-# Troubleshooting
+- Keep new API modules in `src/api/endpoints/<domain>/` with Zod schemas and typed helpers.
+- Keep UI style values derived from `theme` tokens, not hard-coded literals.
+- Persist only durable state in Zustand `partialize` payloads.
+- Use alias imports (`@/...`) for app code and keep file naming conventions consistent.
+- Register any resettable store in `store-reset-registry`.
 
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+Detailed guidance: [Architecture](./docs/architecture.md), [Design System](./docs/design-system.md), [Theming](./docs/theming.md).
