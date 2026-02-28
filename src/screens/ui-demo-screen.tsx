@@ -9,6 +9,7 @@ import {
   UILayout,
   UINavigation,
   UIOverlay,
+  toast,
 } from '@/components';
 import { AppRoute } from '@/navigation/routes';
 import type { RootStackScreenProps } from '@/navigation/navigation-types';
@@ -168,6 +169,23 @@ export function UiDemoScreen({ navigation }: Props) {
               actionLabel="Retry"
               onActionPress={() => {}}
             />
+            <UILayout.HStack spacing="sm" style={styles.wrap}>
+              <UIEssentials.Button
+                size="sm"
+                title="Show Toast"
+                onPress={() => toast.success('Saved successfully')}
+              />
+              <UIEssentials.Button
+                size="sm"
+                variant="secondary"
+                title="Show Snackbar"
+                onPress={() =>
+                  toast.snackbar('Message deleted', 'Undo', () =>
+                    toast.info('Undo action clicked'),
+                  )
+                }
+              />
+            </UILayout.HStack>
           </UILayout.Stack>
         </UIEssentials.Card>
 

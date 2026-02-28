@@ -8,6 +8,7 @@ import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { StyleSheet } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { ToastProvider } from '@/components';
 import { RootNavigator } from '@/navigation/root-navigator';
 import { queryClient, persister } from '@/lib/query-client';
 import { AppErrorBoundary } from '@/providers/error-boundary';
@@ -50,9 +51,11 @@ export const App = () => {
         <SafeAreaProvider>
           <GestureHandlerRootView style={styles.fill}>
             <BottomSheetModalProvider>
-              <NavigationContainer theme={navigationTheme}>
-                <RootNavigator />
-              </NavigationContainer>
+              <ToastProvider>
+                <NavigationContainer theme={navigationTheme}>
+                  <RootNavigator />
+                </NavigationContainer>
+              </ToastProvider>
             </BottomSheetModalProvider>
           </GestureHandlerRootView>
         </SafeAreaProvider>
