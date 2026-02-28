@@ -81,7 +81,7 @@ android {
 
     namespace "com.hyfenative"
     defaultConfig {
-        applicationId "com.hyfenative"
+        applicationId project.APP_ID
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
