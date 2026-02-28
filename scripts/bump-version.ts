@@ -4,25 +4,66 @@ import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import { execFileSync } from 'child_process';
 
-const SEMVER_REGEX = /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/;
+const SEMVER_REGEX = /^(\d+)\.(\d+)\.(\d+)(?:-([a-zA-Z0-9]+)\.(\d+))?$/;
 
 type BumpType = 'patch' | 'minor' | 'major';
 
-function bump(version: string, type: BumpType) {
-  if (!SEMVER_REGEX.test(version)) {
-    throw new Error('Invalid semantic version');
-  }
+function parseVersion(version: string) {
+  const match = version.match(SEMVER_REGEX);
+  if (!match) throw new Error('Invalid semantic version');
 
-  const [major, minor, patch] = version.split('.').map(Number);
-
-  if (type === 'patch') return `${major}.${minor}.${patch + 1}`;
-  if (type === 'minor') return `${major}.${minor + 1}.0`;
-  if (type === 'major') return `${major + 1}.0.0`;
-
-  return version;
+  return {
+    major: Number(match[1]),
+    minor: Number(match[2]),
+    patch: Number(match[3]),
+    preid: match[4],
+    preNumber: match[5] ? Number(match[5]) : undefined,
+  };
 }
 
-function git(args: string[]) {
+function buildVersion(
+  major: number,
+  minor: number,
+  patch: number,
+  preid?: string,
+  preNumber?: number,
+) {
+  if (preid) return `${major}.${minor}.${patch}-${preid}.${preNumber ?? 0}`;
+  return `${major}.${minor}.${patch}`;
+}
+
+function bumpVersion(current: string, type: BumpType, preid?: string) {
+  const v = parseVersion(current);
+
+  if (preid) {
+    if (v.preid === preid) {
+      return buildVersion(
+        v.major,
+        v.minor,
+        v.patch,
+        preid,
+        (v.preNumber ?? 0) + 1,
+      );
+    }
+
+    // convert normal version → prerelease
+    const next = bumpVersion(current, type);
+    const parsed = parseVersion(next);
+    return buildVersion(parsed.major, parsed.minor, parsed.patch, preid, 0);
+  }
+
+  if (type === 'patch') return buildVersion(v.major, v.minor, v.patch + 1);
+  if (type === 'minor') return buildVersion(v.major, v.minor + 1, 0);
+  if (type === 'major') return buildVersion(v.major + 1, 0, 0);
+
+  return current;
+}
+
+function git(args: string[], dryRun: boolean) {
+  if (dryRun) {
+    console.log('[dry-run] git', args.join(' '));
+    return;
+  }
   execFileSync('git', args, { stdio: 'inherit' });
 }
 
@@ -32,6 +73,8 @@ async function main() {
     .option('minor', { type: 'boolean' })
     .option('major', { type: 'boolean' })
     .option('release', { type: 'boolean' })
+    .option('dry-run', { type: 'boolean' })
+    .option('preid', { type: 'string' })
     .strict()
     .parse();
 
@@ -43,13 +86,10 @@ async function main() {
     ? 'major'
     : undefined;
 
-  if (argv.release && !type) {
-    type = 'patch'; // default
-  }
+  if (argv.release && !type) type = 'patch';
+  if (!type) throw new Error('Specify --patch, --minor, --major or --release');
 
-  if (!type) {
-    throw new Error('Specify --patch, --minor, --major or use --release');
-  }
+  const dryRun = argv['dry-run'] ?? false;
 
   const root = process.cwd();
   const configPath = path.join(root, 'hyfenative.config.ts');
@@ -67,7 +107,7 @@ async function main() {
   }
 
   const oldVersion = versionMatch[1];
-  const newVersion = bump(oldVersion, type);
+  const newVersion = bumpVersion(oldVersion, type, argv.preid);
 
   const newBuild = Number(buildMatch[1]) + 1;
   const newCode = Number(codeMatch[1]) + 1;
@@ -87,12 +127,12 @@ async function main() {
     `versionCode: ${newCode}`,
   );
 
-  await fs.writeFile(configPath, configContent);
+  if (!dryRun) await fs.writeFile(configPath, configContent);
 
   /* package.json */
   const packageJson = await fs.readJson(packageJsonPath);
   packageJson.version = newVersion;
-  await fs.writeJson(packageJsonPath, packageJson, { spaces: 2 });
+  if (!dryRun) await fs.writeJson(packageJsonPath, packageJson, { spaces: 2 });
 
   /* Android */
   let gradleContent = await fs.readFile(gradlePropsPath, 'utf8');
@@ -107,49 +147,23 @@ async function main() {
     `VERSION_CODE=${newCode}`,
   );
 
-  await fs.writeFile(gradlePropsPath, gradleContent);
-
-  /* iOS */
-  const iosDir = path.join(root, 'ios');
-  const entries = await fs.readdir(iosDir);
-
-  for (const entry of entries) {
-    if (!entry.endsWith('.xcodeproj')) continue;
-
-    const pbx = path.join(iosDir, entry, 'project.pbxproj');
-    let content = await fs.readFile(pbx, 'utf8');
-
-    content = content.replace(
-      /MARKETING_VERSION = .*?;/g,
-      `MARKETING_VERSION = ${newVersion};`,
-    );
-
-    content = content.replace(
-      /CURRENT_PROJECT_VERSION = .*?;/g,
-      `CURRENT_PROJECT_VERSION = ${newBuild};`,
-    );
-
-    await fs.writeFile(pbx, content);
-  }
+  if (!dryRun) await fs.writeFile(gradlePropsPath, gradleContent);
 
   console.log(`✔ Version bumped: ${oldVersion} → ${newVersion}`);
 
-  /* Release Flow */
   if (argv.release) {
     console.log('🚀 Running release flow...');
 
-    git(['add', '.']);
-    git(['commit', '-m', `release: v${newVersion}`]);
-    git(['tag', `v${newVersion}`]);
-    git(['push']);
-    git(['push', 'origin', `v${newVersion}`]);
+    git(['add', '.'], dryRun);
+    git(['commit', '-m', `release: v${newVersion}`], dryRun);
+    git(['tag', `v${newVersion}`], dryRun);
+    git(['push'], dryRun);
+    git(['push', 'origin', `v${newVersion}`], dryRun);
 
-    console.log(`✔ Git commit created`);
     console.log(`✔ Tag v${newVersion} created`);
-    console.log(`✔ Tag pushed to origin`);
   }
 
-  console.log('✔ Version bump complete');
+  console.log(dryRun ? '✔ Dry run complete' : '✔ Release complete');
 }
 
 main().catch(err => {
