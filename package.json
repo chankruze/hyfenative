@@ -11,6 +11,7 @@
     "ios:prod": "ENVFILE=.env.prod react-native run-ios",
     "configure": "ts-node scripts/configure-app.ts",
     "icons": "ts-node scripts/generate-icons.ts",
+    "bump": "ts-node scripts/bump-version.ts",
     "lint": "eslint .",
     "start": "react-native start",
     "test": "jest",
