@@ -2,6 +2,26 @@ This is a new [**React Native**](https://reactnative.dev) project, bootstrapped 
 
 # Getting Started
 
+## Renaming the project
+
+### Normal
+
+```sh
+npm run configure -- --name="ClientApp" --id="com.client.app"
+```
+
+### Dry Run
+
+```sh
+npm run configure -- --name="ClientApp" --id="com.client.app" --dry-run
+```
+
+### With Git Commit
+
+```sh
+npm run configure -- --name="ClientApp" --id="com.client.app" --commit
+```
+
 > **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
 
 ## Step 1: Start Metro
