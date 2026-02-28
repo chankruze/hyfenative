@@ -24,7 +24,9 @@ export const Spinner = ({
       <ActivityIndicator
         size={spinnerSize}
         color={
-          variant === 'secondary' ? theme.colors.primary : tokens.background
+          variant === 'secondary' || variant === 'ghost'
+            ? theme.colors.primary
+            : tokens.background
         }
       />
     </View>

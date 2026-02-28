@@ -23,7 +23,9 @@ export const IconByVariant = ({
   const iconSize = typeof size === 'number' ? size : iconSizes[size];
   const iconColor =
     color ??
-    (variant === 'secondary' ? theme.colors.textMuted : tokens.background);
+    (variant === 'secondary' || variant === 'ghost'
+      ? theme.colors.textMuted
+      : tokens.background);
 
   return <MaterialDesignIcons name={name} size={iconSize} color={iconColor} />;
 };

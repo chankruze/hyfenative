@@ -1,7 +1,11 @@
 import type { TextStyle, ViewStyle } from 'react-native';
 import type { Theme } from '@/theme';
 
-export type ComponentVariant = 'primary' | 'secondary' | 'destructive';
+export type ComponentVariant =
+  | 'primary'
+  | 'secondary'
+  | 'ghost'
+  | 'destructive';
 
 export type ComponentSize = 'sm' | 'md' | 'lg';
 
@@ -75,6 +79,13 @@ export const getVariantTokens = (
         foreground: theme.colors.textInverse,
         border: theme.colors.error,
       };
+    case 'ghost':
+      return {
+        background: 'transparent',
+        backgroundMuted: 'transparent',
+        foreground: theme.colors.text,
+        border: 'transparent',
+      };
     case 'secondary':
     default:
       return {
@@ -101,6 +112,8 @@ export const getControlContainerStyle = (
     backgroundColor:
       variant === 'primary'
         ? theme.colors.inputBackground
+        : variant === 'ghost'
+          ? 'transparent'
         : tokens.backgroundMuted,
     paddingHorizontal: theme.spacing.sm,
   };
@@ -112,6 +125,9 @@ export const getControlTextStyle = (
 ): TextStyle => {
   const tokens = getVariantTokens(theme, variant);
   return {
-    color: variant === 'secondary' ? theme.colors.text : tokens.foreground,
+    color:
+      variant === 'secondary' || variant === 'ghost'
+        ? theme.colors.text
+        : tokens.foreground,
   };
 };

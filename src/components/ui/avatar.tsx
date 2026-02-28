@@ -56,7 +56,10 @@ export const Avatar = ({
   };
   const imageStyle = { width: dimension, height: dimension };
   const initialsStyle = {
-    color: variant === 'secondary' ? theme.colors.text : tokens.border,
+    color:
+      variant === 'secondary' || variant === 'ghost'
+        ? theme.colors.text
+        : tokens.border,
     fontSize: theme.typography.label.fontSize * (dimension / 36),
   };
 
