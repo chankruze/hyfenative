@@ -73,6 +73,9 @@ export const Button = ({
     paddingHorizontal: horizontalPaddingBySize[size],
     opacity: isDisabled ? theme.state.disabledOpacity : 1,
   };
+  const rowStyle = {
+    gap: theme.spacing.xs,
+  };
 
   const labelStyle = {
     color:
@@ -114,6 +117,7 @@ export const Button = ({
       <Animated.View
         style={[
           styles.container,
+          rowStyle,
           containerStyle,
           { transform: [{ scale }] },
           style,
@@ -147,7 +151,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     flexDirection: 'row',
-    gap: 8,
   },
   fullWidth: {
     alignSelf: 'stretch',

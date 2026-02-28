@@ -1,5 +1,4 @@
 import { forwardRef, useState } from 'react';
-import type { ReactNode } from 'react';
 import { StyleSheet, TextInput, View } from 'react-native';
 import type {
   StyleProp,
@@ -9,28 +8,24 @@ import type {
 } from 'react-native';
 import { useThemeValue } from '@/theme';
 import type { ComponentSize, ComponentVariant } from './shared';
-import { getControlContainerStyle } from './shared';
+import { controlHeights, getControlContainerStyle } from './shared';
 
-type InputProps = Omit<TextInputProps, 'style'> & {
-  id?: string;
+type TextAreaProps = Omit<TextInputProps, 'style' | 'multiline'> & {
   variant?: ComponentVariant;
   size?: ComponentSize;
   invalid?: boolean;
-  leftSlot?: ReactNode;
-  rightSlot?: ReactNode;
+  minRows?: number;
   containerStyle?: StyleProp<ViewStyle>;
   inputStyle?: StyleProp<TextStyle>;
 };
 
-export const Input = forwardRef<TextInput, InputProps>(
+export const TextArea = forwardRef<TextInput, TextAreaProps>(
   (
     {
       variant = 'secondary',
       size = 'md',
       invalid = false,
-      id,
-      leftSlot,
-      rightSlot,
+      minRows = 3,
       containerStyle,
       inputStyle,
       editable = true,
@@ -44,35 +39,27 @@ export const Input = forwardRef<TextInput, InputProps>(
     const theme = useThemeValue();
     const [focused, setFocused] = useState(false);
     const controlStyle = getControlContainerStyle(theme, variant, size);
-    const containerStateStyle = {
+    const minHeight = controlHeights[size] * minRows;
+    const containerStateStyle: ViewStyle = {
       borderColor: invalid
         ? theme.colors.error
         : focused
           ? theme.colors.accent
           : controlStyle.borderColor,
       opacity: editable ? 1 : theme.state.disabledOpacity,
+      minHeight,
+      paddingVertical: theme.spacing.xs,
+      alignItems: 'stretch',
     };
     const textStyle = {
       color: theme.colors.text,
     };
 
     return (
-      <View
-        style={[
-          controlStyle,
-          styles.container,
-          { gap: theme.spacing.xs / 2 },
-          containerStateStyle,
-          containerStyle,
-        ]}
-      >
-        {leftSlot}
+      <View style={[controlStyle, containerStateStyle, containerStyle]}>
         <TextInput
           ref={ref}
-          nativeID={id}
-          accessibilityLabelledBy={
-            props.accessibilityLabelledBy ?? (id ? `${id}__label` : undefined)
-          }
+          multiline
           editable={editable}
           onFocus={event => {
             setFocused(true);
@@ -85,22 +72,18 @@ export const Input = forwardRef<TextInput, InputProps>(
           placeholderTextColor={
             placeholderTextColor ?? theme.colors.inputPlaceholder
           }
+          textAlignVertical="top"
           style={[styles.input, theme.typography.body, textStyle, inputStyle]}
           {...props}
         />
-        {rightSlot}
       </View>
     );
   },
 );
 
-Input.displayName = 'Input';
+TextArea.displayName = 'TextArea';
 
 const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
   input: {
     flex: 1,
     paddingVertical: 0,

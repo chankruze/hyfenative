@@ -17,13 +17,6 @@ type CardProps = Omit<ViewProps, 'style'> & {
   style?: StyleProp<ViewStyle>;
 };
 
-const paddingStyles: Record<CardPadding, keyof typeof styles> = {
-  none: 'paddingNone',
-  sm: 'paddingSm',
-  md: 'paddingMd',
-  lg: 'paddingLg',
-};
-
 export const Card = ({
   children,
   header,
@@ -46,6 +39,16 @@ export const Card = ({
   const dividerStyle = {
     borderColor: theme.colors.border,
   };
+  const contentPaddingStyle = {
+    padding:
+      padding === 'none'
+        ? 0
+        : padding === 'sm'
+          ? theme.spacing.sm
+          : padding === 'lg'
+            ? theme.spacing.lg
+            : theme.spacing.md,
+  };
 
   return (
     <View style={[styles.base, containerStyle, elevationStyle, style]} {...props}>
@@ -53,7 +56,7 @@ export const Card = ({
         <View style={[styles.slot, styles.headerSlot, dividerStyle]}>{header}</View>
       ) : null}
 
-      <View style={[styles.slot, styles[paddingStyles[padding]]]}>{children}</View>
+      <View style={[styles.slot, contentPaddingStyle]}>{children}</View>
 
       {footer ? (
         <View style={[styles.slot, styles.footerSlot, dividerStyle]}>{footer}</View>
@@ -75,17 +78,5 @@ const styles = StyleSheet.create({
   },
   footerSlot: {
     borderTopWidth: 1,
-  },
-  paddingNone: {
-    padding: 0,
-  },
-  paddingSm: {
-    padding: 12,
-  },
-  paddingMd: {
-    padding: 16,
-  },
-  paddingLg: {
-    padding: 20,
   },
 });

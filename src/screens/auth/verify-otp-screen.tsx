@@ -1,8 +1,19 @@
 import { useMemo, useState } from 'react';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useSendOtp, useVerifyOtp } from '@/api/endpoints/auth/use-auth-api';
-import { FormField, Input, Screen, Spinner } from '@/components';
+import {
+  Button,
+  Card,
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldLabel,
+  Form,
+  Input,
+  Screen,
+  Stack,
+} from '@/components';
 import { AppRoute } from '@/navigation/routes';
 import { useThemeValue } from '@/theme';
 import type { Theme } from '@/theme';
@@ -79,8 +90,8 @@ export function VerifyOtpScreen({ navigation, route }: Props) {
 
   return (
     <Screen keyboardAware scroll>
-      <View style={styles.page}>
-        <View style={styles.hero}>
+      <Stack spacing="lg" style={styles.page}>
+        <Stack spacing="xs" style={styles.hero}>
           <Text style={styles.kicker}>{t('auth.verifyKicker')}</Text>
           <Text style={styles.title}>{t('auth.verifyTitle')}</Text>
           <Text style={styles.subtitle}>
@@ -89,65 +100,71 @@ export function VerifyOtpScreen({ navigation, route }: Props) {
           <Text style={styles.subtitle}>
             {t('auth.verifyDelivery', { via: via.toUpperCase() })}
           </Text>
-        </View>
+        </Stack>
 
-        <View style={styles.card}>
-          <FormField
-            label={t('auth.otpLabel')}
-            error={errorMessage}
-            variant="secondary"
-          >
-            <Input
-              value={code}
-              onChangeText={setCode}
-              placeholder={t('auth.otpPlaceholder')}
-              keyboardType="number-pad"
-              maxLength={6}
-              invalid={Boolean(errorMessage)}
-              inputStyle={styles.codeInputText}
-            />
-          </FormField>
-
-          {successMessage ? (
-            <Text style={styles.success}>{successMessage}</Text>
-          ) : null}
-
-          <Pressable
-            onPress={onVerify}
+        <Card style={styles.card}>
+          <Form
+            onSubmit={onVerify}
+            submitting={verifyOtpMutation.isPending}
             disabled={!canVerify}
-            style={[
-              styles.primaryButton,
-              !canVerify && styles.primaryButtonDisabled,
-            ]}
+            spacing="xs"
           >
-            {verifyOtpMutation.isPending ? (
-              <Spinner variant="secondary" size="sm" />
-            ) : (
-              <Text style={styles.primaryButtonText}>
-                {t('auth.verifyOtp')}
-              </Text>
-            )}
-          </Pressable>
+            {({ submit, submitting }) => (
+              <>
+                <Field invalid={Boolean(errorMessage)}>
+                  <FieldLabel htmlFor="auth-otp-code">
+                    {t('auth.otpLabel')}
+                  </FieldLabel>
+                  <Input
+                    id="auth-otp-code"
+                    value={code}
+                    onChangeText={setCode}
+                    onSubmitEditing={submit}
+                    placeholder={t('auth.otpPlaceholder')}
+                    keyboardType="number-pad"
+                    maxLength={6}
+                    invalid={Boolean(errorMessage)}
+                    inputStyle={styles.codeInputText}
+                  />
+                  <FieldDescription>{t('auth.otpPlaceholder')}</FieldDescription>
+                  <FieldError>{errorMessage}</FieldError>
+                </Field>
 
-          <Pressable
-            onPress={onResend}
-            disabled={resendOtpMutation.isPending}
-            style={styles.ghostButton}
-          >
-            {resendOtpMutation.isPending ? (
-              <Spinner variant="primary" size="sm" />
-            ) : (
-              <Text style={styles.ghostButtonText}>{t('auth.resendOtp')}</Text>
-            )}
-          </Pressable>
+                {successMessage ? (
+                  <Text style={styles.success}>{successMessage}</Text>
+                ) : null}
 
-          <Pressable onPress={() => navigation.navigate(AppRoute.Login)}>
-            <Text style={styles.secondaryAction}>
-              {t('auth.changeIdentifier')}
-            </Text>
-          </Pressable>
-        </View>
-      </View>
+                <Button
+                  onPress={submit}
+                  disabled={!canVerify}
+                  loading={submitting}
+                  title={t('auth.verifyOtp')}
+                  fullWidth
+                  style={styles.primaryButton}
+                />
+
+                <Button
+                  onPress={onResend}
+                  disabled={resendOtpMutation.isPending}
+                  loading={resendOtpMutation.isPending}
+                  variant="ghost"
+                  title={t('auth.resendOtp')}
+                  fullWidth
+                  textStyle={styles.ghostButtonText}
+                />
+
+                <Button
+                  onPress={() => navigation.navigate(AppRoute.Login)}
+                  variant="ghost"
+                  title={t('auth.changeIdentifier')}
+                  fullWidth
+                  textStyle={styles.secondaryAction}
+                />
+              </>
+            )}
+          </Form>
+        </Card>
+      </Stack>
     </Screen>
   );
 }
@@ -160,11 +177,8 @@ const createStyles = (theme: Theme) =>
       paddingVertical: theme.spacing.xl,
       justifyContent: 'space-between',
       backgroundColor: theme.colors.background,
-      gap: theme.spacing.lg,
     },
-    hero: {
-      gap: theme.spacing.xs,
-    },
+    hero: {},
     kicker: {
       color: theme.colors.primary,
       ...theme.typography.kicker,
@@ -178,11 +192,6 @@ const createStyles = (theme: Theme) =>
       ...theme.typography.bodySm,
     },
     card: {
-      backgroundColor: theme.colors.surface,
-      borderColor: theme.colors.border,
-      borderWidth: 1,
-      borderRadius: theme.radius.lg,
-      padding: theme.spacing.md,
       gap: theme.spacing.xs,
     },
     codeInputText: {
@@ -195,27 +204,7 @@ const createStyles = (theme: Theme) =>
       lineHeight: theme.typography.label.lineHeight,
     },
     primaryButton: {
-      height: 48,
-      borderRadius: theme.radius.md,
-      backgroundColor: theme.colors.primary,
-      alignItems: 'center',
-      justifyContent: 'center',
       marginTop: theme.spacing.xs / 2,
-    },
-    primaryButtonDisabled: {
-      opacity: 0.5,
-    },
-    primaryButtonText: {
-      color: theme.colors.textInverse,
-      ...theme.typography.button,
-    },
-    ghostButton: {
-      height: 44,
-      borderRadius: theme.radius.md,
-      borderColor: theme.colors.borderStrong,
-      borderWidth: 1,
-      alignItems: 'center',
-      justifyContent: 'center',
     },
     ghostButtonText: {
       color: theme.colors.primary,
@@ -223,13 +212,8 @@ const createStyles = (theme: Theme) =>
       fontWeight: theme.typography.kicker.fontWeight,
     },
     secondaryAction: {
-      textAlign: 'center',
       color: theme.colors.primary,
       fontSize: theme.typography.label.fontSize,
       fontWeight: theme.typography.label.fontWeight,
-      marginTop: theme.spacing.xs * 0.75,
-    },
-    blankSpace: {
-      flex: 1,
     },
   });

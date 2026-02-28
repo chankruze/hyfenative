@@ -1,15 +1,17 @@
 import type { ReactNode } from 'react';
-import { Text, View } from 'react-native';
 import type { StyleProp, TextStyle, ViewStyle } from 'react-native';
-import { useThemeValue } from '@/theme';
 import type { ComponentSize, ComponentVariant } from './shared';
-import { getVariantTokens, sizeScale } from './shared';
+import { sizeScale } from './shared';
+import { Field, FieldDescription, FieldError, FieldLabel } from './field';
 
 type FormFieldProps = {
   label?: string;
   description?: string;
+  hint?: string;
   error?: string;
   required?: boolean;
+  optionalText?: string;
+  labelRight?: ReactNode;
   variant?: ComponentVariant;
   size?: ComponentSize;
   children: ReactNode;
@@ -21,69 +23,44 @@ type FormFieldProps = {
 export const FormField = ({
   label,
   description,
+  hint,
   error,
   required = false,
-  variant = 'secondary',
+  optionalText = 'Optional',
+  labelRight,
+  variant: _variant = 'secondary',
   size = 'md',
   children,
   style,
   labelStyle,
   messageStyle,
 }: FormFieldProps) => {
-  const theme = useThemeValue();
-  const tokens = getVariantTokens(theme, variant);
   const scale = sizeScale[size];
+  const helpText = description ?? hint;
 
   return (
-    <View style={[{ gap: theme.spacing.xs / 2 }, style]}>
+    <Field
+      style={[
+        {
+          gap: 4 * scale,
+        },
+        style,
+      ]}
+      invalid={Boolean(error)}
+    >
       {label ? (
-        <Text
-          style={[
-            {
-              color: theme.colors.textMuted,
-              ...theme.typography.label,
-              fontSize: theme.typography.label.fontSize * scale,
-            },
-            labelStyle,
-          ]}
-        >
+        <FieldLabel style={labelStyle}>
           {label}
           {required ? ' *' : ''}
-        </Text>
+          {!required && optionalText ? ` (${optionalText})` : ''}
+        </FieldLabel>
       ) : null}
-
+      {labelRight}
       {children}
-
-      {error ? (
-        <Text
-          style={[
-            {
-              color: theme.colors.error,
-              ...theme.typography.bodySm,
-              fontSize: theme.typography.bodySm.fontSize * scale,
-            },
-            messageStyle,
-          ]}
-        >
-          {error}
-        </Text>
-      ) : description ? (
-        <Text
-          style={[
-            {
-              color:
-                variant === 'secondary'
-                  ? theme.colors.textMuted
-                  : tokens.border,
-              ...theme.typography.bodySm,
-              fontSize: theme.typography.bodySm.fontSize * scale,
-            },
-            messageStyle,
-          ]}
-        >
-          {description}
-        </Text>
+      <FieldError style={messageStyle}>{error}</FieldError>
+      {!error ? (
+        <FieldDescription style={messageStyle}>{helpText}</FieldDescription>
       ) : null}
-    </View>
+    </Field>
   );
 };
