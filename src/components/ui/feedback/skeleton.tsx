@@ -2,8 +2,8 @@ import { useEffect, useMemo, useRef } from 'react';
 import { Animated, Easing } from 'react-native';
 import type { StyleProp, ViewStyle } from 'react-native';
 import { useThemeValue } from '@/theme';
-import type { ComponentSize, ComponentVariant } from './shared';
-import { controlHeights, getVariantTokens } from './shared';
+import type { ComponentSize, ComponentVariant } from '../primitives/shared';
+import { controlHeights, getVariantTokens } from '../primitives/shared';
 
 type SkeletonProps = {
   variant?: ComponentVariant;

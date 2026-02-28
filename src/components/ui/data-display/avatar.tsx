@@ -6,8 +6,8 @@ import type {
   ViewStyle,
 } from 'react-native';
 import { useThemeValue } from '@/theme';
-import type { ComponentSize, ComponentVariant } from './shared';
-import { avatarSizes, getVariantTokens } from './shared';
+import type { ComponentSize, ComponentVariant } from '../primitives/shared';
+import { avatarSizes, getVariantTokens } from '../primitives/shared';
 
 type AvatarProps = {
   variant?: ComponentVariant;

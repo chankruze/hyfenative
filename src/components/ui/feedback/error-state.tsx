@@ -3,39 +3,44 @@ import { Text, View } from 'react-native';
 import type { StyleProp, TextStyle, ViewStyle } from 'react-native';
 import type { MaterialDesignIconsIconName } from '@react-native-vector-icons/material-design-icons';
 import { useThemeValue } from '@/theme';
-import { IconByVariant } from './icon-by-variant';
+import { Button } from '../essentials/button';
+import { IconByVariant } from '../primitives/icon-by-variant';
 
-type EmptyStateProps = {
-  title: string;
+type ErrorStateProps = {
+  title?: string;
   description?: string;
   icon?: MaterialDesignIconsIconName;
+  actionLabel?: string;
+  onActionPress?: () => void;
   action?: ReactNode;
   style?: StyleProp<ViewStyle>;
   titleStyle?: StyleProp<TextStyle>;
   descriptionStyle?: StyleProp<TextStyle>;
 };
 
-export const EmptyState = ({
-  title,
-  description,
-  icon = 'inbox-outline',
+export const ErrorState = ({
+  title = 'Something went wrong',
+  description = 'Please try again.',
+  icon = 'alert-circle-outline',
+  actionLabel,
+  onActionPress,
   action,
   style,
   titleStyle,
   descriptionStyle,
-}: EmptyStateProps) => {
+}: ErrorStateProps) => {
   const theme = useThemeValue();
   const containerStyle: ViewStyle = {
     borderWidth: 1,
     borderRadius: theme.radius.lg,
-    borderColor: theme.colors.border,
-    backgroundColor: theme.colors.surface,
+    borderColor: theme.colors.error,
+    backgroundColor: theme.colors.primaryMuted,
     padding: theme.spacing.lg,
     alignItems: 'center',
     gap: theme.spacing.sm,
   };
   const titleTextStyle: TextStyle = {
-    color: theme.colors.text,
+    color: theme.colors.error,
     ...theme.typography.h2,
     textAlign: 'center',
   };
@@ -44,15 +49,25 @@ export const EmptyState = ({
     ...theme.typography.bodySm,
     textAlign: 'center',
   };
+  const actionNode =
+    action ??
+    (actionLabel && onActionPress ? (
+      <Button
+        variant="destructive"
+        size="sm"
+        title={actionLabel}
+        onPress={onActionPress}
+      />
+    ) : null);
 
   return (
     <View style={[containerStyle, style]}>
-      <IconByVariant name={icon} variant="secondary" size="lg" />
+      <IconByVariant name={icon} variant="destructive" size="lg" />
       <Text style={[titleTextStyle, titleStyle]}>{title}</Text>
       {description ? (
         <Text style={[descriptionTextStyle, descriptionStyle]}>{description}</Text>
       ) : null}
-      {action}
+      {actionNode}
     </View>
   );
 };

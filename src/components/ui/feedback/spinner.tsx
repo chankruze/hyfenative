@@ -1,8 +1,8 @@
 import { ActivityIndicator, View } from 'react-native';
 import type { StyleProp, ViewStyle } from 'react-native';
 import { useThemeValue } from '@/theme';
-import type { ComponentSize, ComponentVariant } from './shared';
-import { getVariantTokens, spinnerSizes } from './shared';
+import type { ComponentSize, ComponentVariant } from '../primitives/shared';
+import { getVariantTokens, spinnerSizes } from '../primitives/shared';
 
 type SpinnerProps = {
   variant?: ComponentVariant;

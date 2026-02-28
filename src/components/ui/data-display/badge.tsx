@@ -1,8 +1,8 @@
 import { Text, View } from 'react-native';
 import type { StyleProp, TextStyle, ViewStyle } from 'react-native';
 import { useThemeValue } from '@/theme';
-import type { ComponentSize, ComponentVariant } from './shared';
-import { getVariantTokens, sizeScale } from './shared';
+import type { ComponentSize, ComponentVariant } from '../primitives/shared';
+import { getVariantTokens, sizeScale } from '../primitives/shared';
 
 type BadgeProps = {
   label: string;
@@ -14,23 +14,24 @@ type BadgeProps = {
 
 export const Badge = ({
   label,
-  variant = 'secondary',
+  variant = 'primary',
   size = 'md',
   style,
   textStyle,
 }: BadgeProps) => {
   const theme = useThemeValue();
-  const tokens = getVariantTokens(theme, variant);
+  const resolvedVariant: ComponentVariant = variant || 'primary';
+  const tokens = getVariantTokens(theme, resolvedVariant);
   const scale = sizeScale[size];
   const containerStyle: ViewStyle = {
     alignSelf: 'flex-start',
     borderRadius: theme.radius.sm,
-    borderWidth: variant === 'ghost' ? 0 : 1,
+    borderWidth: resolvedVariant === 'ghost' ? 0 : 1,
     borderColor: tokens.border,
     backgroundColor:
-      variant === 'secondary'
+      resolvedVariant === 'secondary'
         ? theme.colors.surfaceAlt
-        : variant === 'ghost'
+        : resolvedVariant === 'ghost'
           ? 'transparent'
           : tokens.backgroundMuted,
     paddingHorizontal: theme.spacing.xs,
@@ -38,8 +39,8 @@ export const Badge = ({
   };
   const labelStyle: TextStyle = {
     color:
-      variant === 'secondary' || variant === 'ghost'
-        ? theme.colors.textMuted
+      resolvedVariant === 'secondary' || resolvedVariant === 'ghost'
+        ? theme.colors.text
         : tokens.foreground,
     ...theme.typography.label,
     fontSize: theme.typography.label.fontSize * scale,

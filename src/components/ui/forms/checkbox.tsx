@@ -1,12 +1,13 @@
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import type { StyleProp, TextStyle, ViewStyle } from 'react-native';
+import MaterialDesignIcons from '@react-native-vector-icons/material-design-icons';
 import { useThemeValue } from '@/theme';
-import type { ComponentSize, ComponentVariant } from './shared';
-import { getVariantTokens } from './shared';
+import type { ComponentSize, ComponentVariant } from '../primitives/shared';
+import { getVariantTokens } from '../primitives/shared';
 
-type RadioProps = {
-  selected: boolean;
-  onSelect: () => void;
+type CheckboxProps = {
+  checked: boolean;
+  onCheckedChange: (checked: boolean) => void;
   label?: string;
   description?: string;
   variant?: ComponentVariant;
@@ -17,21 +18,15 @@ type RadioProps = {
   descriptionStyle?: StyleProp<TextStyle>;
 };
 
-const outerSizeByVariant: Record<ComponentSize, number> = {
+const boxSizeByVariant: Record<ComponentSize, number> = {
   sm: 18,
   md: 22,
   lg: 26,
 };
 
-const innerSizeByVariant: Record<ComponentSize, number> = {
-  sm: 8,
-  md: 10,
-  lg: 12,
-};
-
-export const Radio = ({
-  selected,
-  onSelect,
+export const Checkbox = ({
+  checked,
+  onCheckedChange,
   label,
   description,
   variant = 'primary',
@@ -40,24 +35,23 @@ export const Radio = ({
   style,
   labelStyle,
   descriptionStyle,
-}: RadioProps) => {
+}: CheckboxProps) => {
   const theme = useThemeValue();
   const tokens = getVariantTokens(theme, variant);
-  const outerSize = outerSizeByVariant[size];
-  const innerSize = innerSizeByVariant[size];
+  const boxSize = boxSizeByVariant[size];
   const isSubtle = variant === 'secondary' || variant === 'ghost';
-  const ringStyle = {
-    width: outerSize,
-    height: outerSize,
-    borderRadius: outerSize / 2,
-    borderColor: selected ? tokens.border : theme.colors.borderStrong,
+  const boxStyle = {
+    width: boxSize,
+    height: boxSize,
+    borderRadius: theme.radius.sm * 0.6,
+    borderColor: checked ? tokens.border : theme.colors.borderStrong,
+    backgroundColor: checked
+      ? isSubtle
+        ? theme.colors.primary
+        : tokens.background
+      : 'transparent',
   };
-  const dotStyle = {
-    width: innerSize,
-    height: innerSize,
-    borderRadius: innerSize / 2,
-    backgroundColor: isSubtle ? theme.colors.primary : tokens.background,
-  };
+  const checkColor = isSubtle ? theme.colors.textInverse : tokens.foreground;
   const labelTextStyle = {
     color: theme.colors.text,
     ...theme.typography.body,
@@ -76,16 +70,17 @@ export const Radio = ({
 
   return (
     <Pressable
-      accessibilityRole="radio"
-      accessibilityState={{ checked: selected, disabled }}
+      accessibilityRole="checkbox"
+      accessibilityState={{ checked, disabled }}
       disabled={disabled}
-      onPress={onSelect}
+      onPress={() => onCheckedChange(!checked)}
       style={[styles.container, containerStyle, style]}
     >
-      <View style={[styles.ring, ringStyle]}>
-        {selected ? <View style={dotStyle} /> : null}
+      <View style={[styles.box, boxStyle]}>
+        {checked ? (
+          <MaterialDesignIcons name="check" size={boxSize * 0.72} color={checkColor} />
+        ) : null}
       </View>
-
       {label ? (
         <View style={[styles.content, contentStyle]}>
           <Text style={[labelTextStyle, labelStyle]}>{label}</Text>
@@ -105,8 +100,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
-  ring: {
-    borderWidth: 1.5,
+  box: {
+    borderWidth: 1,
     alignItems: 'center',
     justifyContent: 'center',
   },

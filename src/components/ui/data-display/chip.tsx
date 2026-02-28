@@ -2,8 +2,8 @@ import type { ReactNode } from 'react';
 import { Pressable, Text } from 'react-native';
 import type { StyleProp, TextStyle, ViewStyle } from 'react-native';
 import { useThemeValue } from '@/theme';
-import type { ComponentSize, ComponentVariant } from './shared';
-import { getVariantTokens, sizeScale } from './shared';
+import type { ComponentSize, ComponentVariant } from '../primitives/shared';
+import { getVariantTokens, sizeScale } from '../primitives/shared';
 
 type ChipProps = {
   label: string;

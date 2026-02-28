@@ -3,9 +3,9 @@ import { Pressable, Text } from 'react-native';
 import type { StyleProp, TextStyle, ViewStyle } from 'react-native';
 import type { MaterialDesignIconsIconName } from '@react-native-vector-icons/material-design-icons';
 import { useThemeValue } from '@/theme';
-import { IconByVariant } from './icon-by-variant';
-import type { ComponentSize, ComponentVariant } from './shared';
-import { getVariantTokens, sizeScale } from './shared';
+import { IconByVariant } from '../primitives/icon-by-variant';
+import type { ComponentSize, ComponentVariant } from '../primitives/shared';
+import { getVariantTokens, sizeScale } from '../primitives/shared';
 
 type TagProps = {
   label: string;

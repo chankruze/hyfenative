@@ -1,8 +1,8 @@
 import { Switch as RNSwitch, View } from 'react-native';
 import type { StyleProp, ViewStyle } from 'react-native';
 import { useThemeValue } from '@/theme';
-import type { ComponentSize, ComponentVariant } from './shared';
-import { getVariantTokens } from './shared';
+import type { ComponentSize, ComponentVariant } from '../primitives/shared';
+import { getVariantTokens } from '../primitives/shared';
 
 type SwitchProps = {
   value: boolean;

@@ -10,8 +10,8 @@ import {
 import type { StyleProp, TextStyle, ViewStyle } from 'react-native';
 import MaterialDesignIcons from '@react-native-vector-icons/material-design-icons';
 import { useThemeValue } from '@/theme';
-import type { ComponentSize, ComponentVariant } from './shared';
-import { controlHeights, getControlContainerStyle, getVariantTokens } from './shared';
+import type { ComponentSize, ComponentVariant } from '../primitives/shared';
+import { controlHeights, getControlContainerStyle, getVariantTokens } from '../primitives/shared';
 
 export type SelectOption = {
   label: string;

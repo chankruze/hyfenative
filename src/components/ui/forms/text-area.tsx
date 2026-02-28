@@ -7,8 +7,8 @@ import type {
   ViewStyle,
 } from 'react-native';
 import { useThemeValue } from '@/theme';
-import type { ComponentSize, ComponentVariant } from './shared';
-import { controlHeights, getControlContainerStyle } from './shared';
+import type { ComponentSize, ComponentVariant } from '../primitives/shared';
+import { controlHeights, getControlContainerStyle } from '../primitives/shared';
 
 type TextAreaProps = Omit<TextInputProps, 'style' | 'multiline'> & {
   variant?: ComponentVariant;

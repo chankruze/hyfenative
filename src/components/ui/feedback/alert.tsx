@@ -3,8 +3,8 @@ import { Text, View } from 'react-native';
 import type { StyleProp, TextStyle, ViewStyle } from 'react-native';
 import type { MaterialDesignIconsIconName } from '@react-native-vector-icons/material-design-icons';
 import { useThemeValue } from '@/theme';
-import { IconByVariant } from './icon-by-variant';
-import type { ComponentVariant } from './shared';
+import { IconByVariant } from '../primitives/icon-by-variant';
+import type { ComponentVariant } from '../primitives/shared';
 
 type AlertProps = {
   title?: string;

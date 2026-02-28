@@ -1,43 +1,34 @@
-export { AssetByVariant } from './asset-by-variant';
-export { Alert } from './alert';
-export { AppBar } from './app-bar';
-export { Avatar } from './avatar';
-export { Badge } from './badge';
-export { BottomSheet } from './bottom-sheet';
-export { Button } from './button';
-export { Card } from './card';
-export { Checkbox } from './checkbox';
-export { Chip } from './chip';
-export { Divider } from './divider';
-export { EmptyState } from './empty-state';
-export { ErrorState } from './error-state';
-export { Field, FieldDescription, FieldError, FieldLabel } from './field';
-export { Form } from './form';
-export { FormField } from './form-field';
-export { Header } from './header';
-export { HStack } from './h-stack';
-export { IconByVariant } from './icon-by-variant';
-export { Input } from './input';
-export { Label } from './label';
-export { AppModal } from './modal';
-export { Radio } from './radio';
-export { Select } from './select';
-export { Skeleton } from './skeleton';
-export { Spacer } from './spacer';
-export { Spinner } from './spinner';
-export { Stack } from './stack';
-export { Switch } from './switch';
-export { TabBar } from './tab-bar';
-export { Tag } from './tag';
-export { TextArea } from './text-area';
-export type { ComponentSize, ComponentVariant } from './shared';
-export type { SelectOption } from './select';
-export {
-  UIDataDisplay,
-  UIEssentials,
-  UIFeedback,
-  UIForms,
-  UILayout,
-  UINavigation,
-  UIOverlay,
-} from './groups';
+export { AssetByVariant } from './primitives/asset-by-variant';
+export { IconByVariant } from './primitives/icon-by-variant';
+export type { ComponentSize, ComponentVariant } from './primitives/shared';
+export { Button } from './essentials/button';
+export { Card } from './essentials/card';
+export { Stack } from './layout/stack';
+export { HStack } from './layout/h-stack';
+export { Spacer } from './layout/spacer';
+export { Divider } from './layout/divider';
+export { Input } from './forms/input';
+export { TextArea } from './forms/text-area';
+export { Select } from './forms/select';
+export type { SelectOption } from './forms/select';
+export { Switch } from './forms/switch';
+export { Checkbox } from './forms/checkbox';
+export { Radio } from './forms/radio';
+export { Label } from './forms/label';
+export { Field, FieldDescription, FieldError, FieldLabel } from './forms/field';
+export { Form } from './forms/form';
+export { FormField } from './forms/form-field';
+export { Alert } from './feedback/alert';
+export { Skeleton } from './feedback/skeleton';
+export { Spinner } from './feedback/spinner';
+export { EmptyState } from './feedback/empty-state';
+export { ErrorState } from './feedback/error-state';
+export { Avatar } from './data-display/avatar';
+export { Badge } from './data-display/badge';
+export { Chip } from './data-display/chip';
+export { Tag } from './data-display/tag';
+export { Header } from './navigation/header';
+export { AppBar } from './navigation/app-bar';
+export { TabBar } from './navigation/tab-bar';
+export { AppModal } from './overlay/modal';
+export { BottomSheet } from './overlay/bottom-sheet';

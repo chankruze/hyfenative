@@ -8,8 +8,8 @@ import type {
   ViewStyle,
 } from 'react-native';
 import { useThemeValue } from '@/theme';
-import type { ComponentSize, ComponentVariant } from './shared';
-import { getControlContainerStyle } from './shared';
+import type { ComponentSize, ComponentVariant } from '../primitives/shared';
+import { getControlContainerStyle } from '../primitives/shared';
 
 type InputProps = Omit<TextInputProps, 'style'> & {
   id?: string;

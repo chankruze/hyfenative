@@ -15,8 +15,8 @@ import type {
   ViewStyle,
 } from 'react-native';
 import { useThemeValue } from '@/theme';
-import type { ComponentSize, ComponentVariant } from './shared';
-import { controlHeights, getVariantTokens } from './shared';
+import type { ComponentSize, ComponentVariant } from '../primitives/shared';
+import { controlHeights, getVariantTokens } from '../primitives/shared';
 
 type ButtonProps = Omit<PressableProps, 'style'> & {
   children?: ReactNode;

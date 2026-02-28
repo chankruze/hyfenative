@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import type { StyleProp, TextStyle, ViewStyle } from 'react-native';
-import type { ComponentSize, ComponentVariant } from './shared';
-import { sizeScale } from './shared';
+import type { ComponentSize, ComponentVariant } from '../primitives/shared';
+import { sizeScale } from '../primitives/shared';
 import { Field, FieldDescription, FieldError, FieldLabel } from './field';
 
 type FormFieldProps = {
