@@ -2,6 +2,7 @@ import fs from 'fs-extra';
 import path from 'path';
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
+import { execFileSync } from 'child_process';
 
 const SEMVER_REGEX = /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/;
 
@@ -21,15 +22,20 @@ function bump(version: string, type: BumpType) {
   return version;
 }
 
+function git(args: string[]) {
+  execFileSync('git', args, { stdio: 'inherit' });
+}
+
 async function main() {
   const argv = await yargs(hideBin(process.argv))
     .option('patch', { type: 'boolean' })
     .option('minor', { type: 'boolean' })
     .option('major', { type: 'boolean' })
+    .option('release', { type: 'boolean' })
     .strict()
     .parse();
 
-  const type: BumpType | undefined = argv.patch
+  let type: BumpType | undefined = argv.patch
     ? 'patch'
     : argv.minor
     ? 'minor'
@@ -37,8 +43,12 @@ async function main() {
     ? 'major'
     : undefined;
 
+  if (argv.release && !type) {
+    type = 'patch'; // default
+  }
+
   if (!type) {
-    throw new Error('Specify --patch, --minor, or --major');
+    throw new Error('Specify --patch, --minor, --major or use --release');
   }
 
   const root = process.cwd();
@@ -79,18 +89,12 @@ async function main() {
 
   await fs.writeFile(configPath, configContent);
 
-  /* -------------------------
-     Update package.json
-  -------------------------- */
-
+  /* package.json */
   const packageJson = await fs.readJson(packageJsonPath);
   packageJson.version = newVersion;
   await fs.writeJson(packageJsonPath, packageJson, { spaces: 2 });
 
-  /* -------------------------
-     Update Android
-  -------------------------- */
-
+  /* Android */
   let gradleContent = await fs.readFile(gradlePropsPath, 'utf8');
 
   gradleContent = gradleContent.replace(
@@ -105,10 +109,7 @@ async function main() {
 
   await fs.writeFile(gradlePropsPath, gradleContent);
 
-  /* -------------------------
-     Update iOS
-  -------------------------- */
-
+  /* iOS */
   const iosDir = path.join(root, 'ios');
   const entries = await fs.readdir(iosDir);
 
@@ -132,9 +133,22 @@ async function main() {
   }
 
   console.log(`✔ Version bumped: ${oldVersion} → ${newVersion}`);
-  console.log(`✔ package.json updated`);
-  console.log(`✔ Android VERSION_NAME + VERSION_CODE updated`);
-  console.log(`✔ iOS MARKETING_VERSION + CURRENT_PROJECT_VERSION updated`);
+
+  /* Release Flow */
+  if (argv.release) {
+    console.log('🚀 Running release flow...');
+
+    git(['add', '.']);
+    git(['commit', '-m', `release: v${newVersion}`]);
+    git(['tag', `v${newVersion}`]);
+    git(['push']);
+    git(['push', 'origin', `v${newVersion}`]);
+
+    console.log(`✔ Git commit created`);
+    console.log(`✔ Tag v${newVersion} created`);
+    console.log(`✔ Tag pushed to origin`);
+  }
+
   console.log('✔ Version bump complete');
 }
 
