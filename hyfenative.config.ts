@@ -19,7 +19,7 @@ export type HyfenativeConfig = {
   };
 };
 
-const config: HyfenativeConfig = {
+export const config: HyfenativeConfig = {
   app: {
     name: 'Hyfenative',
     slug: 'hyfenative',
@@ -38,5 +38,3 @@ const config: HyfenativeConfig = {
     icon: './assets/app-icon.png',
   },
 };
-
-export default config;
