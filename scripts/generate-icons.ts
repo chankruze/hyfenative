@@ -1,6 +1,7 @@
 import fs from 'fs-extra';
 import path from 'path';
 import sharp from 'sharp';
+import { config } from '../hyfenative.config';
 
 const ANDROID_SIZES: Record<string, number> = {
   mdpi: 48,
@@ -14,10 +15,6 @@ const IOS_SIZES = [20, 29, 40, 60, 76, 83.5, 1024];
 
 async function main() {
   const root = process.cwd();
-  const configPath = path.join(root, 'hyfenative.config.ts');
-  const configModule = await import(configPath);
-  const config = configModule.default;
-
   const iconPath = path.join(root, config.assets.icon);
 
   if (!(await fs.pathExists(iconPath))) {
