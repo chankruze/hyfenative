@@ -25,12 +25,43 @@ export type ThemeColors = {
   screenOverlay: string;
 };
 
+export type ThemeElevationLevel = {
+  shadowColor: string;
+  shadowOffset: { width: number; height: number };
+  shadowOpacity: number;
+  shadowRadius: number;
+  elevation: number;
+};
+
+export type ThemeElevation = {
+  sm: ThemeElevationLevel;
+  md: ThemeElevationLevel;
+  lg: ThemeElevationLevel;
+};
+
 export type ThemeSpacing = {
   xs: number;
   sm: number;
   md: number;
   lg: number;
   xl: number;
+};
+
+export type ThemeMotion = {
+  fast: number;
+  normal: number;
+  slow: number;
+  press: number;
+};
+
+export type ThemeBackdrop = {
+  subtle: string;
+  strong: string;
+};
+
+export type ThemeState = {
+  pressedOpacity: number;
+  disabledOpacity: number;
 };
 
 export type ThemeFontFamilies = {
@@ -75,4 +106,8 @@ export type Theme = {
   spacing: ThemeSpacing;
   typography: ThemeTypography;
   radius: ThemeRadius;
+  elevation: ThemeElevation;
+  motion: ThemeMotion;
+  backdrop: ThemeBackdrop;
+  state: ThemeState;
 };

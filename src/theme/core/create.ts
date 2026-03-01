@@ -4,7 +4,7 @@ import {
   precomputeTypographyScales,
 } from '../typography/build';
 import { fontFamiliesByBrand } from '../font/families';
-import { radius, spacing } from '../tokens/base';
+import { backdrop, elevation, motion, radius, spacing, state } from '../tokens/base';
 import { darkColors } from '../tokens/dark';
 import { lightColors } from '../tokens/light';
 import { oceanDarkColors, oceanLightColors } from '../tokens/ocean';
@@ -69,5 +69,9 @@ export const createTheme = ({
     spacing,
     typography,
     radius,
+    elevation,
+    motion,
+    backdrop,
+    state,
   };
 };

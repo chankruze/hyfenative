@@ -1,15 +1,20 @@
 import { useMemo, useState } from 'react';
-import {
-  ActivityIndicator,
-  Pressable,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from 'react-native';
+import { Pressable, StyleSheet, Text } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useSendOtp } from '@/api/endpoints/auth/use-auth-api';
-import { Screen } from '@/components/screen';
+import {
+  Button,
+  Card,
+  Field,
+  FieldError,
+  FieldLabel,
+  Form,
+  HStack,
+  Input,
+  Radio,
+  Screen,
+  Stack,
+} from '@/components';
 import { AppRoute } from '@/navigation/routes';
 import { useThemeValue } from '@/theme';
 import type { Theme } from '@/theme';
@@ -41,6 +46,7 @@ export function LoginScreen({ navigation }: Props) {
   );
 
   const mutationError = sendOtpMutation.error?.message;
+  const inputError = localError ?? mutationError ?? undefined;
 
   const onContinue = async () => {
     const normalized = normalizeIdentifier(identifier);
@@ -70,69 +76,92 @@ export function LoginScreen({ navigation }: Props) {
 
   return (
     <Screen keyboardAware scroll>
-      <View style={styles.page}>
-        <View style={styles.hero}>
+      <Stack spacing="lg" style={styles.page}>
+        <Stack spacing="xs" style={styles.hero}>
           <Text style={styles.kicker}>{t('auth.loginKicker')}</Text>
           <Text style={styles.title}>{t('auth.loginTitle')}</Text>
           <Text style={styles.subtitle}>{t('auth.loginSubtitle')}</Text>
-        </View>
-        <View style={styles.card}>
-          <Text style={styles.label}>{t('auth.identifierLabel')}</Text>
-          <TextInput
-            value={identifier}
-            onChangeText={setIdentifier}
-            placeholder={t('auth.identifierPlaceholder')}
-            placeholderTextColor={theme.colors.inputPlaceholder}
-            style={styles.input}
-            autoCapitalize="none"
-            keyboardType="email-address"
-          />
+        </Stack>
 
-          <Text style={styles.label}>{t('auth.sendOtpVia')}</Text>
-          <View style={styles.viaRow}>
-            {OTP_VIA_OPTIONS.map(option => {
-              const isActive = option === via;
-              return (
-                <Pressable
-                  key={option}
-                  onPress={() => setVia(option)}
-                  style={[styles.viaButton, isActive && styles.viaButtonActive]}
-                >
-                  <Text
-                    style={[styles.viaText, isActive && styles.viaTextActive]}
-                  >
-                    {option.toUpperCase()}
-                  </Text>
-                </Pressable>
-              );
-            })}
-          </View>
-
-          {localError ? <Text style={styles.error}>{localError}</Text> : null}
-          {mutationError ? (
-            <Text style={styles.error}>{mutationError}</Text>
-          ) : null}
-
-          <Pressable
-            onPress={onContinue}
+        <Card style={styles.card}>
+          <Form
+            onSubmit={onContinue}
+            submitting={sendOtpMutation.isPending}
             disabled={!canSubmit}
-            style={[
-              styles.primaryButton,
-              !canSubmit && styles.primaryButtonDisabled,
-            ]}
+            spacing="xs"
           >
-            {sendOtpMutation.isPending ? (
-              <ActivityIndicator color={theme.colors.textInverse} />
-            ) : (
-              <Text style={styles.primaryButtonText}>{t('common.continue')}</Text>
-            )}
-          </Pressable>
+            {({ submit, submitting }) => (
+              <>
+                <Field invalid={Boolean(inputError)}>
+                  <FieldLabel htmlFor="auth-phone">
+                    {t('auth.identifierLabel')}
+                  </FieldLabel>
+                  <Input
+                    id="auth-phone"
+                    value={identifier}
+                    onChangeText={setIdentifier}
+                    onSubmitEditing={submit}
+                    placeholder={t('auth.identifierPlaceholder')}
+                    autoCapitalize="none"
+                    keyboardType="email-address"
+                    invalid={Boolean(inputError)}
+                  />
+                  <FieldError>{inputError}</FieldError>
+                </Field>
 
-          <Pressable onPress={() => navigation.navigate(AppRoute.Welcome)}>
-            <Text style={styles.secondaryAction}>{t('auth.backToWelcome')}</Text>
-          </Pressable>
-        </View>
-      </View>
+                <Field>
+                  <FieldLabel>{t('auth.sendOtpVia')}</FieldLabel>
+                  <HStack spacing="xs" style={styles.viaRow}>
+                    {OTP_VIA_OPTIONS.map(option => {
+                      const isActive = option === via;
+                      return (
+                        <Pressable
+                          key={option}
+                          onPress={() => setVia(option)}
+                          style={[
+                            styles.viaButton,
+                            isActive && styles.viaButtonActive,
+                          ]}
+                        >
+                          <Radio
+                            selected={isActive}
+                            onSelect={() => setVia(option)}
+                            variant={isActive ? 'primary' : 'secondary'}
+                            size="sm"
+                            label={option.toUpperCase()}
+                            labelStyle={[
+                              styles.viaText,
+                              isActive && styles.viaTextActive,
+                            ]}
+                            style={styles.viaButtonContent}
+                          />
+                        </Pressable>
+                      );
+                    })}
+                  </HStack>
+                </Field>
+
+                <Button
+                  onPress={submit}
+                  disabled={!canSubmit}
+                  loading={submitting}
+                  title={t('common.continue')}
+                  fullWidth
+                  style={styles.primaryButton}
+                />
+
+                <Button
+                  onPress={() => navigation.navigate(AppRoute.Welcome)}
+                  variant="ghost"
+                  title={t('auth.backToWelcome')}
+                  fullWidth
+                  textStyle={styles.secondaryAction}
+                />
+              </>
+            )}
+          </Form>
+        </Card>
+      </Stack>
     </Screen>
   );
 }
@@ -145,11 +174,8 @@ const createStyles = (theme: Theme) =>
       paddingVertical: theme.spacing.xl,
       justifyContent: 'space-between',
       backgroundColor: theme.colors.background,
-      gap: theme.spacing.lg,
     },
-    hero: {
-      gap: theme.spacing.xs,
-    },
+    hero: {},
     kicker: {
       color: theme.colors.primary,
       ...theme.typography.kicker,
@@ -163,27 +189,7 @@ const createStyles = (theme: Theme) =>
       ...theme.typography.bodySm,
     },
     card: {
-      backgroundColor: theme.colors.surface,
-      borderColor: theme.colors.border,
-      borderWidth: 1,
-      borderRadius: theme.radius.lg,
-      padding: theme.spacing.md,
       gap: theme.spacing.xs,
-    },
-    label: {
-      color: theme.colors.textMuted,
-      ...theme.typography.label,
-      marginTop: theme.spacing.xs / 4,
-    },
-    input: {
-      height: 48,
-      borderRadius: theme.radius.md,
-      borderWidth: 1,
-      borderColor: theme.colors.borderStrong,
-      backgroundColor: theme.colors.inputBackground,
-      color: theme.colors.text,
-      paddingHorizontal: theme.spacing.sm,
-      fontSize: theme.typography.body.fontSize,
     },
     viaRow: {
       flexDirection: 'row',
@@ -195,8 +201,13 @@ const createStyles = (theme: Theme) =>
       borderWidth: 1,
       borderColor: theme.colors.borderStrong,
       paddingVertical: theme.spacing.xs,
+      paddingHorizontal: theme.spacing.xs,
       alignItems: 'center',
       backgroundColor: theme.colors.surfaceAlt,
+    },
+    viaButtonContent: {
+      width: '100%',
+      justifyContent: 'center',
     },
     viaButtonActive: {
       borderColor: theme.colors.primary,
@@ -210,34 +221,12 @@ const createStyles = (theme: Theme) =>
     viaTextActive: {
       color: theme.colors.accent,
     },
-    error: {
-      color: theme.colors.error,
-      fontSize: theme.typography.label.fontSize,
-      lineHeight: theme.typography.label.lineHeight,
-    },
     primaryButton: {
-      height: 48,
-      borderRadius: theme.radius.md,
-      backgroundColor: theme.colors.primary,
-      alignItems: 'center',
-      justifyContent: 'center',
       marginTop: theme.spacing.xs / 2,
     },
-    primaryButtonDisabled: {
-      opacity: 0.5,
-    },
-    primaryButtonText: {
-      color: theme.colors.textInverse,
-      ...theme.typography.button,
-    },
     secondaryAction: {
-      textAlign: 'center',
       color: theme.colors.primary,
       fontSize: theme.typography.label.fontSize,
       fontWeight: theme.typography.label.fontWeight,
-      marginTop: theme.spacing.xs,
-    },
-    blankSpace: {
-      flex: 1,
     },
   });
