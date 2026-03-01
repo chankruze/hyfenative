@@ -1,4 +1,4 @@
-package com.hyfenative
+package com.geekofia.hyfenative
 
 import android.app.Application
 import com.facebook.react.PackageList

@@ -24,15 +24,15 @@ export const config: HyfenativeConfig = {
     name: 'Hyfenative',
     slug: 'hyfenative',
     scheme: 'hyfenative',
-    version: '0.0.1',
-    buildNumber: 1,
-    versionCode: 1,
+    version: '1.0.0',
+    buildNumber: 2,
+    versionCode: 2,
   },
   android: {
-    package: 'com.hyfenative',
+    package: 'com.geekofia.hyfenative',
   },
   ios: {
-    bundleId: 'com.hyfenative',
+    bundleId: 'com.geekofia.hyfenative',
   },
   assets: {
     icon: './assets/app-icon.png',

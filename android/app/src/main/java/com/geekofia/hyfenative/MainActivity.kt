@@ -1,4 +1,4 @@
-package com.hyfenative
+package com.geekofia.hyfenative
 
 import com.facebook.react.ReactActivity
 import com.facebook.react.ReactActivityDelegate
