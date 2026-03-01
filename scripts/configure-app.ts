@@ -16,11 +16,14 @@ const JAVA_PACKAGE_REGEX = /^[a-z][a-z0-9_]*(\.[a-z][a-z0-9_]*)+$/;
 
 const FILES_TO_UPDATE = [
   'hyfenative.config.ts',
+  'package.json',
   'android/app/build.gradle',
   'android/gradle.properties',
   'android/app/src/main/AndroidManifest.xml',
+  'android/app/src/main/res/values/strings.xml',
   'android/app/src',
   'ios/AppConfig.xcconfig',
+  'ios/hyfenative/Info.plist',
   'ios/hyfenative.xcodeproj/project.pbxproj',
 ];
 
@@ -33,6 +36,15 @@ function slugify(name: string) {
     .trim()
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-');
+}
+
+function escapeXml(value: string) {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&apos;');
 }
 
 function ensureValidName(name: string) {
@@ -206,6 +218,62 @@ async function updateIosBundleId(root: string, bundleId: string, dryRun: boolean
   }
 }
 
+async function updatePackageJsonName(root: string, appName: string, dryRun: boolean) {
+  const packageJsonPath = path.join(root, 'package.json');
+  if (!(await fs.pathExists(packageJsonPath))) return;
+
+  const packageJson = await fs.readFile(packageJsonPath, 'utf8');
+  const parsed = JSON.parse(packageJson) as { name?: string };
+  parsed.name = slugify(appName);
+
+  const updated = `${JSON.stringify(parsed, null, 2)}\n`;
+  await safeWrite(packageJsonPath, updated, dryRun);
+  console.log('✔ Updated package.json name');
+}
+
+async function updateLauncherNames(root: string, appName: string, dryRun: boolean) {
+  const escapedAppName = escapeXml(appName);
+  const stringsPath = path.join(root, 'android/app/src/main/res/values/strings.xml');
+  if (await fs.pathExists(stringsPath)) {
+    let stringsXml = await fs.readFile(stringsPath, 'utf8');
+
+    if (/<string\s+name="app_name">[\s\S]*?<\/string>/.test(stringsXml)) {
+      stringsXml = stringsXml.replace(
+        /(<string\s+name="app_name">)[\s\S]*?(<\/string>)/,
+        `$1${escapedAppName}$2`,
+      );
+    } else {
+      stringsXml = stringsXml.replace(
+        /<\/resources>/,
+        `  <string name="app_name">${escapedAppName}</string>\n</resources>`,
+      );
+    }
+
+    await safeWrite(stringsPath, stringsXml, dryRun);
+    console.log('✔ Updated Android launcher app name');
+  }
+
+  const infoPlistPath = path.join(root, 'ios/hyfenative/Info.plist');
+  if (await fs.pathExists(infoPlistPath)) {
+    let infoPlist = await fs.readFile(infoPlistPath, 'utf8');
+
+    if (/<key>CFBundleDisplayName<\/key>\s*<string>[\s\S]*?<\/string>/.test(infoPlist)) {
+      infoPlist = infoPlist.replace(
+        /(<key>CFBundleDisplayName<\/key>\s*<string>)[\s\S]*?(<\/string>)/,
+        `$1${escapedAppName}$2`,
+      );
+    } else {
+      infoPlist = infoPlist.replace(
+        /<\/dict>/,
+        `\t<key>CFBundleDisplayName</key>\n\t<string>${escapedAppName}</string>\n</dict>`,
+      );
+    }
+
+    await safeWrite(infoPlistPath, infoPlist, dryRun);
+    console.log('✔ Updated iOS launcher app name');
+  }
+}
+
 /* =========================================================
    VALIDATION
 ========================================================= */
@@ -257,6 +325,13 @@ async function validateRename(root: string, expectedPackage: string) {
   // On newer Android setups package can be omitted from the manifest.
   if (manifestPackageMatch && manifestPackageMatch[1] !== expectedPackage) {
     throw new Error('Validation failed: manifest package mismatch');
+  }
+
+  const packageJson = JSON.parse(
+    await fs.readFile(path.join(root, 'package.json'), 'utf8'),
+  ) as { name?: string };
+  if (!packageJson.name) {
+    throw new Error('Validation failed: package.json name missing');
   }
 }
 
@@ -318,6 +393,9 @@ async function main() {
 
     await safeWrite(configPath, configContent, dryRun);
     console.log('✔ Updated hyfenative.config.ts');
+
+    await updatePackageJsonName(root, argv.name, dryRun);
+    await updateLauncherNames(root, argv.name, dryRun);
 
     // Update build.gradle
     const gradlePath = path.join(root, 'android/app/build.gradle');
