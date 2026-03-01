@@ -11,7 +11,7 @@ const ANDROID_SIZES: Record<string, number> = {
   xxxhdpi: 192,
 };
 
-const IOS_SIZES = [20, 29, 40, 60, 76, 83.5, 1024];
+const IOS_SIZES = [20, 29, 40, 60, 1024];
 
 async function main() {
   const root = process.cwd();
@@ -29,10 +29,16 @@ async function main() {
     const dir = path.join(androidRes, `mipmap-${density}`);
     await fs.ensureDir(dir);
 
+    // App manifest references both launcher and round icons.
     await sharp(iconPath)
       .resize(size, size)
       .png()
       .toFile(path.join(dir, 'ic_launcher.png'));
+
+    await sharp(iconPath)
+      .resize(size, size)
+      .png()
+      .toFile(path.join(dir, 'ic_launcher_round.png'));
   }
 
   console.log('✔ Android icons generated');
@@ -67,26 +73,45 @@ async function main() {
     images: [],
     info: { version: 1, author: 'xcode' },
   };
+  const generatedFilenames = new Set<string>();
 
   for (const size of IOS_SIZES) {
     const scales = size === 1024 ? [1] : [2, 3];
 
     for (const scale of scales) {
       const pixelSize = Math.round(size * scale);
-      const filename = `icon-${size}@${scale}x.png`;
+      const filename =
+        size === 1024 ? 'icon-1024.png' : `icon-${size}@${scale}x.png`;
+      generatedFilenames.add(filename);
 
       await sharp(iconPath)
         .resize(pixelSize, pixelSize)
         .png()
         .toFile(path.join(appIconSetPath, filename));
 
-      contentsJson.images.push({
-        size: `${size}x${size}`,
-        idiom: 'iphone',
-        filename,
-        scale: `${scale}x`,
-      });
+      contentsJson.images.push(
+        size === 1024
+          ? {
+              size: `${size}x${size}`,
+              idiom: 'ios-marketing',
+              filename,
+              scale: `${scale}x`,
+            }
+          : {
+              size: `${size}x${size}`,
+              idiom: 'iphone',
+              filename,
+              scale: `${scale}x`,
+            },
+      );
     }
+  }
+
+  const existingIosIcons = await fs.readdir(appIconSetPath);
+  for (const file of existingIosIcons) {
+    if (!/^icon-.*\.png$/.test(file)) continue;
+    if (generatedFilenames.has(file)) continue;
+    await fs.remove(path.join(appIconSetPath, file));
   }
 
   await fs.writeJson(path.join(appIconSetPath, 'Contents.json'), contentsJson, {
