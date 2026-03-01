@@ -1,6 +1,6 @@
 {
   "name": "hyfenative",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "private": true,
   "scripts": {
     "android:dev": "ENVFILE=.env.dev react-native run-android",
@@ -12,6 +12,7 @@
     "configure": "tsx scripts/configure-app.ts",
     "icons": "tsx scripts/generate-icons.ts",
     "bump": "tsx scripts/bump-version.ts",
+    "clean:dev": "bash scripts/clean-dev.sh",
     "lint": "eslint .",
     "start": "react-native start",
     "test": "jest",

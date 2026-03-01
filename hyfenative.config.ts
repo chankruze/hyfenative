@@ -24,9 +24,9 @@ export const config: HyfenativeConfig = {
     name: 'Hyfenative',
     slug: 'hyfenative',
     scheme: 'hyfenative',
-    version: '1.0.1',
-    buildNumber: 3,
-    versionCode: 3,
+    version: '1.0.2',
+    buildNumber: 4,
+    versionCode: 4,
   },
   android: {
     package: 'com.geekofia.hyfenative',
